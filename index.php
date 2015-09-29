@@ -36,24 +36,74 @@ $notifications = array();   /* Массив для записи уведомле
 function calcDiscount($key, $data) {
     global $amountForPay;
     static $discount;
-
+    
     switch ($data['diskont']) {
         case 'diskont0':
             $discount = 0;
             break;
         case 'diskont1':
-            $discount = 0.1;
+            $discount = 10;
             break;
         case 'diskont2':
-            $discount = 0.2;
+            $discount = 20;
             break;
     }
     if (($key == 'игрушка детская велосипед') and ( $amountForPay[$key] >= 3)) {
-        $discount = 0.3;
+        $discount = 30;
     }
     return $discount;
 }
 
+/* Расчёт данных для заполнения таблицы */
+function calcDataForTable($data) {
+    global $typesTotal;
+    global $amountTotal;
+    global $priceTotal;    
+    global $amountForPay;
+    global $notifications;
+    
+    $outputData = array();
+
+    foreach ($data as $key => $value) {
+
+        if ($value['количество заказано'] <= $value['осталось на складе']) {
+            $amountForPay[$key] = $value['количество заказано'];
+        } else {
+            $amountForPay[$key] = $value['осталось на складе'];
+            $noteText = "К сожалению нужного количества товара \"" . $key . "\" не оказалось на складе. ";
+            if ($value['осталось на складе'] > 0) {
+                $noteText .= "В наличии имеется только " . $value['осталось на складе'] . "шт.";
+            }
+            $notifications[] = $noteText;
+        }
+
+        if ($amountForPay[$key] > 0) {
+            $typesTotal++;
+            $amountTotal += $amountForPay[$key];
+        }
+
+        $discount = 'calcDiscount'; /* по заданию - переменная функция */
+        $price = $value['цена'] * $amountForPay[$key] * ( 100 - $discount($key, $value))/100;
+        $priceTotal += $price;
+        
+        $outputData[$key] = array('скидка'=>$discount($key, $value), 'стоимость'=>$price); /* запись рассчитанной информации*/
+    }   
+    return $outputData;
+}    
+
+/* Вывод секции "Уведомления" */
+function printNotifications($notifications) {
+    if (count($notifications) > 0) {
+        echo "<br><font size = 3><b> Уведомления: </b></font>";
+        foreach ($notifications as $value) {
+            echo "<br> -" . $value;
+        }
+    }    
+}
+
+$tableData = calcDataForTable($bd); /* Массив данных для заполнения таблицы */
+
+/* Шапка */
 echo "<font size = 5><b> Корзина: </b></font>";
 echo "<table>
         <thead>
@@ -64,51 +114,30 @@ echo "<table>
             <td><b> Скидка, % </b></td>
             <td><b> Итоговая стоимость, руб. </b></td>
         </thead>";
+
+/* Таблица */
 foreach ($bd as $key => $value) {
-
-    if ($value['количество заказано'] <= $value['осталось на складе']) {
-        $amountForPay[$key] = $value['количество заказано'];
-    } else {
-        $amountForPay[$key] = $value['осталось на складе'];
-        $noteText = "К сожалению нужного количества товара \"" . $key . "\" не оказалось на складе. ";
-        if ($value['осталось на складе'] > 0) {
-            $noteText .= "В наличии имеется только " . $value['осталось на складе'] . "шт.";
-        }
-        $notifications[] = $noteText;
-    }
-
-    if ($amountForPay[$key] > 0) {
-        $typesTotal++;
-        $amountTotal += $amountForPay[$key];
-    }
-
-    $discount = 'calcDiscount'; /* по заданию - переменная функция */
-    $price = $value['цена'] * $amountForPay[$key] * ( 1 - $discount($key, $value));
-    $priceTotal += $price;
-
     echo "<tr>
             <td>" . $key . "</td>
             <td>" . $value['количество заказано'] . "</td>
             <td>" . $value['осталось на складе'] . "</td>
             <td>" . $value['цена'] . "</td>            
-            <td>" . ($discount($key, $value) * 100) . "</td>
-            <td>" . $price . "</td>
+            <td>" . $tableData[$key]['скидка'] . "</td>
+            <td>" . $tableData[$key]['стоимость'] . "</td>
          </tr>";
 }
 echo "</table>";
 
-echo "<br><font size = 4><b> Итого: </b></font>";
-echo "<br>Наименований заказано: " . $typesTotal;
-echo "<br>Общее кол-во товаров: " . $amountTotal;
-echo "<br>Общая сумма заказа: " . $priceTotal . "<br>";
+/* Итого */
+echo "<br><font size = 4><b> Итого: </b></font>" .
+     "<br>Наименований заказано: " . $typesTotal .
+     "<br>Общее кол-во товаров: " . $amountTotal .
+     "<br>Общая сумма заказа: " . $priceTotal . "<br>";
 
-if (count($notifications) > 0) {
-    echo "<br><font size = 3><b> Уведомления: </b></font>";
-    foreach ($notifications as $value) {
-        echo "<br> -" . $value;
-    }
-}
+/* Уведомления */
+printNotifications($notifications); 
 
+/* Скидки */
 if ($amountForPay['игрушка детская велосипед'] >= 3) {
     echo "<br><font size = 3><b> Скидки: </b></font>" .
          "<br>-При покупке от 3шт. товара \"игрушка детская велосипед\" Вам предоставляется скидка 30%";
