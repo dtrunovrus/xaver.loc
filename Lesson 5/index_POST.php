@@ -13,7 +13,6 @@ $news = 'Четыре новосибирские компании вошли в 
 «Красный факел» пустит публику на ночные экскурсии за кулисы и по закоулкам столетнего здания
 Звезды телешоу «Голос» Наргиз Закирова и Гела Гуралиа споют в «Маяковском»';
 $news = explode("\n", $news);
-$id = '';
 
 /* Вывод всего списка новостей */
 function printNewsList($news) {
@@ -23,26 +22,23 @@ function printNewsList($news) {
 }
 
 /* Вывод новости из списка по id */
-function printNews($newsList, $id) {
-    if ($id >= 1 && $id <= count($newsList)) {
-        echo $newsList[$id - 1] . "<br>";
-    } else {
-        echo "<b>Новость с таким номером отсутствует.<br>".
-             "Выберите одну из имеющихся:</b><br>";
-        printNewsList($newsList);
-    } 
+function printNews($newsList, $id) {       
+    if (is_numeric($id)) {
+        if (in_array($id, range(1, count($newsList)))) {
+            echo $newsList[$id - 1] . "<br>";
+        }
+        else {
+            echo "<b>Новость с таким номером отсутствует.<br>".
+                 "Выберите одну из имеющихся:</b><br>";
+                printNewsList($newsList);
+        }
+    }       
 }
 
-foreach ($_POST as $key => $value) {
-    if ($key=='id'){
-    $id = $value;
-    }        
-}
+$id = isset($_POST['id'])?$_POST['id']:null;
 
-if($id!='') {
-    printNews($news, trim($id));
-    echo "<br>";
-}
+printNews($news, trim($id));
+echo "<br>";
 ?> 
 
 <html>

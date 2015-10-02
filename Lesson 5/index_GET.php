@@ -13,7 +13,6 @@ $news = 'Четыре новосибирские компании вошли в 
 «Красный факел» пустит публику на ночные экскурсии за кулисы и по закоулкам столетнего здания
 Звезды телешоу «Голос» Наргиз Закирова и Гела Гуралиа споют в «Маяковском»';
 $news = explode("\n", $news);
-$id = '';
 
 /* Вывод всего списка новостей */
 function printNewsList($news) {
@@ -23,26 +22,24 @@ function printNewsList($news) {
 }
 
 /* Вывод новости из списка по id */
-function printNews($newsList, $id) {
-    if ($id >= 1 && $id <= count($newsList)) {
-        echo $newsList[$id - 1] . "<br>";
-    } else {
+function printNews($newsList, $id) {    
+    if(is_null($id)) {
+        header('HTTP/1.0 404 Not Found');
+        exit;        
+    }
+
+    if ($id===false) {
         echo "<b>Новость с таким номером отсутствует.<br>".
              "Выберите одну из имеющихся:</b><br>";
         printNewsList($newsList);
+    }
+    else {
+        echo $newsList[$id - 1] . "<br>";        
     } 
 }
 
-foreach ($_GET as $key => $value) {
-    if ($key=='id'){
-        $id = $value;
-    }        
-}
-
-if($id=='') {
-    header('HTTP/1.0 404 Not Found');
-    exit;
-}
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, array("options" => array("min_range"=>1, "max_range"=>count($news))));
 
 printNews($news, $id);
+
 ?>
