@@ -1,145 +1,219 @@
 <?php
-
 error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 4 */
+/* Lesson 6 */
 
-$ini_string = '
-[игрушка мягкая мишка белый]
-цена = ' . mt_rand(1, 10) . ';
-количество заказано = ' . mt_rand(1, 10) . ';
-осталось на складе = ' . mt_rand(0, 10) . ';
-diskont = diskont' . mt_rand(0, 2) . ';
-    
-[одежда детская куртка синяя синтепон]
-цена = ' . mt_rand(1, 10) . ';
-количество заказано = ' . mt_rand(1, 10) . ';
-осталось на складе = ' . mt_rand(0, 10) . ';
-diskont = diskont' . mt_rand(0, 2) . ';
-    
-[игрушка детская велосипед]
-цена = ' . mt_rand(1, 10) . ';
-количество заказано = ' . mt_rand(1, 10) . ';
-осталось на складе = ' . mt_rand(0, 10) . ';
-diskont = diskont' . mt_rand(0, 2) . ';
-';
-$bd = parse_ini_string($ini_string, true);
-
-$typesTotal = 0;            /* Общее кол-во заказанных наименований */
-$amountTotal = 0;           /* Общее кол-во заказанных единиц товара */
-$priceTotal = 0;            /* Общая сумма заказа */
-$amountForPay = array();    /* Массив с данными по кол-ву единиц на оплату для каждого наименования */
-$notifications = array();   /* Массив для записи уведомлений */
-
-/* Подсчёт скидки */
-function calcDiscount($key, $data) {
-    global $amountForPay;
-    static $discount;
-    
-    switch ($data['diskont']) {
-        case 'diskont0':
-            $discount = 0;
-            break;
-        case 'diskont1':
-            $discount = 10;
-            break;
-        case 'diskont2':
-            $discount = 20;
-            break;
-    }
-    if (($key == 'игрушка детская велосипед') and ( $amountForPay[$key] >= 3)) {
-        $discount = 30;
-    }
-    return $discount;
+/* Заполнение $data данными из массива $_SESSION по id  */
+function FillData($id = '') {
+    $data['private']        = ($id!=='') ? $_SESSION['ads'][$id]['private']        : 1;
+    $data['seller_name']    = ($id!=='') ? $_SESSION['ads'][$id]['seller_name']    : '';
+    $data['email']          = ($id!=='') ? $_SESSION['ads'][$id]['email']          : '';
+    $data['allow_mails']    = ($id!=='') ? $_SESSION['ads'][$id]['allow_mails']    : 0;
+    $data['phone']          = ($id!=='') ? $_SESSION['ads'][$id]['phone']          : '';
+    $data['city']           = ($id!=='') ? $_SESSION['ads'][$id]['city']           : '';
+    $data['title']          = ($id!=='') ? $_SESSION['ads'][$id]['title']          : '';
+    $data['description']    = ($id!=='') ? $_SESSION['ads'][$id]['description']    : '';
+    $data['price']          = ($id!=='') ? $_SESSION['ads'][$id]['price']          : 0;
+    return $data;
 }
 
-/* Расчёт данных для заполнения таблицы */
-function calcDataForTable($data) {
-    global $typesTotal;
-    global $amountTotal;
-    global $priceTotal;    
-    global $amountForPay;
-    global $notifications;
+/* Вывод основной формы */
+function showForm($data) {
+    $cities = array('641780'=>'Новосибирск','641490'=>'Барабинск','641510'=>'Бердск',
+                    '641600'=>'Искитим', '641630'=>'Колывань','641680'=>'Краснообск',
+                    '641710'=>'Куйбышев','641760'=>'Мошково','641790'=>'Обь',
+                    '641800'=>'Ордынское','641970'=>'Черепаново');
+    $cityIsChecked = ($data['city']=='')?false:true;
+    ?>
+    <form  id = 'anketForm' method="post" name = 'anketForm'>  
+        <table border = "0" class = "table1">
+            <col class="col1_1">
+            <col class="col1_2">
+            <tr> 
+                <td></td>
+                <td>
+                    <label><input type="radio" <?echo ($data['private']==1)?" checked=\"\"" : "" ?>checked="" value="1" name="private">Частное лицо</label> <label><input type="radio" <? echo ($data['private']==0)?" checked=\"\"" : "" ?>value="0" name="private">Компания</label> </td></tr>
+            <tr>
+                <td>
+                    <b id="seller_name">Ваше имя</b> </td>    
+                <td> 
+                <input type="text" maxlength="40" value="<? echo $data['seller_name'] ?>" name="seller_name" id="fld_seller_name"> <td></tr>
+            <tr>
+                <td>
+                    <b id="email">Электронная почта</b> </td>    
+                <td> 
+                <input type="text" value="<? echo $data['email'] ?>" name="email" id="fld_email"> <td></tr>
+            <tr>
+                <td></td>    
+                <td> 
+                    <label for="allow_mails"> <input type="checkbox" <?echo ($data['allow_mails']==1)?" checked=\"\"" : "" ?> value="0" name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> </label> <td></tr>
+            <tr>
+                <td>
+                    <label id="fld_phone_label" for="fld_phone"><b>Номер телефона</b></label> </td>
+                <td> 
+                <input type="text" value="<? echo $data['phone'] ?>" name="phone" id="fld_phone"> <td></tr>
+            <tr>
+                <td>
+                    <label for="region"><b>Город</b></label> </td>
+                <td>
+                    <select title="Выберите Ваш город" name="city" id="region" >            
+                        <option disabled="disabled" <?echo $cityIsChecked?"\"\"":"selected=\"\""?> >-- Выберите город --</option>
+                        <?
+                        foreach ($cities as $key=>$value) {
+                            $selected = ($key==$data['city']) ? 'selected=""' : ''; 
+                            echo '<option data-coords=",," '.$selected.' value="'.$key.'">'.$value.'</option>';
+                        }?>                            
+            <tr>
+                <td>
+                    <label for="fld_title"><b>Название объявления</b></label> </td>    
+                <td> 
+                <input type="text" maxlength="50" value="<? echo $data['title'] ?>" name="title" id="fld_title"> <td></tr>
+            <tr>
+                <td>
+                    <label for="fld_description"><b>Описание объявления</b></label> </td>    
+                <td> 
+                    <textarea maxlength="200"  name="description" id="fld_description"><? echo $data['description'] ?></textarea> <td></tr>
+            <tr>
+                <td>
+                    <label id="price_lbl" for="fld_price"><b>Цена</b></label> </td>    
+                <td> 
+                    <input type="text" maxlength="9" value="<?echo $data['price']?>" name="price" id="fld_price">&nbsp;<span id="fld_price_title">руб.</span>  <td></tr>          
+        </table> <br/>
+        <input type="submit" value="Подтвердить" id="form_submit" name="submit" >
+    </form>    
+<?php
+}
+
+/* Проверка заполнения всех параметров формы */
+function checkForm(&$data) {    
+    $data['private']        = $_POST['private'];    
+    $data['seller_name']    = $_POST['seller_name'];    
+    $data['email']          = $_POST['email'];
+    $data['allow_mails']    = isset($_POST['allow_mails']) ? 1 : 0;    
+    $data['phone']          = $_POST['phone'];
+    $data['city']           = isset($_POST['city']) ? $_POST['city'] : '';    
+    $data['title']          = $_POST['title'];    
+    $data['description']    = $_POST['description'];    
+    $data['price']          = (float)$_POST['price'];          
     
-    $outputData = array();
-
-    foreach ($data as $key => $value) {
-
-        if ($value['количество заказано'] <= $value['осталось на складе']) {
-            $amountForPay[$key] = $value['количество заказано'];
-        } else {
-            $amountForPay[$key] = $value['осталось на складе'];
-            $noteText = "К сожалению нужного количества товара \"" . $key . "\" не оказалось на складе. ";
-            if ($value['осталось на складе'] > 0) {
-                $noteText .= "В наличии имеется только " . $value['осталось на складе'] . "шт.";
-            }
-            $notifications[] = $noteText;
+    $errorList = array();
+    if ($data['seller_name']=='') {
+        $errorList[] = 'Укажите Ваше имя';
+    }    
+    if ($data['email']=='') {
+        $errorList[] = 'Укажите Ваш адрес электронной почты';
+    }
+    if ($data['phone']=='') {
+        $errorList[] = 'Укажите Ваш контактный телефон';
+    }
+    else if (!is_numeric($data['phone'])) {
+        $errorList[] = 'В номере телефона должны быть только цифры';
+    }
+    if ($data['city']=='') {
+        $errorList[] = 'Укажите город Вашего проживания';
+    }    
+    if ($data['title']=='') {
+        $errorList[] = 'Укажите название объявления';
+    }    
+    if ($data['description']=='') {
+        $errorList[] = 'Укажите описание объявления';
+    }
+    if ($data['price']=='0') {
+        $errorList[] = 'Укажите цену в рублях';
+    }
+    else if (!is_numeric($data['price'])) {
+        $errorList[] = 'Цену нужно указывать цифрами';
+    }
+    if (count($errorList)) {
+        echo "<br/><b>Не все поля заполнены:</b><br/>";
+        foreach ($errorList as $value) {
+            echo $value."<br/>";
         }
+        echo "<br/>";
+        return false;
+    }
+    return true;
+}
 
-        if ($amountForPay[$key] > 0) {
-            $typesTotal++;
-            $amountTotal += $amountForPay[$key];
+/* Вывод всех объявления в $_SESSION */
+function showSessionList() {
+    if (isset($_SESSION['ads']) && count($_SESSION['ads'])) {
+        ?>
+        <br/><b>Введённые объявления:</b><br/>
+        <form id = 'sessionForm' method='post' name = 'sessionForm'>
+        <table border = "0" class="table2">
+        <col class="col2_1">
+        <col class="col2_2">
+        <col class="col2_3">
+        <col class="col2_4">        
+        <?php              
+        foreach ($_SESSION['ads'] as $key => $value) { 
+        ?>
+        <tr><td> <a href= "?id=<?echo $key."\"> ".$value['title']?></a> </td>
+            <td> <?echo $value['price']?> </td>
+            <td> <?echo $value['seller_name']?> </td>
+            <td> <input type="submit" value="Удалить" id="session_delete" name=<?echo "delete".$key?>></td></tr>
+        <?
         }
-
-        $discount = 'calcDiscount'; /* по заданию - переменная функция */
-        $price = $value['цена'] * $amountForPay[$key] * ( 100 - $discount($key, $value))/100;
-        $priceTotal += $price;
-        
-        $outputData[$key] = array('скидка'=>$discount($key, $value), 'стоимость'=>$price); /* запись рассчитанной информации*/
-    }   
-    return $outputData;
-}    
-
-/* Вывод секции "Уведомления" */
-function printNotifications($notifications) {
-    if (count($notifications) > 0) {
-        echo "<br><font size = 3><b> Уведомления: </b></font>";
-        foreach ($notifications as $value) {
-            echo "<br> -" . $value;
-        }
+        echo "</table></form> <br/>";        
     }    
 }
 
-$tableData = calcDataForTable($bd); /* Массив данных для заполнения таблицы */
-
-/* Шапка */
-echo "<font size = 5><b> Корзина: </b></font>";
-echo "<table>
-        <thead>
-            <td><b> Наименование товара </b></td>
-            <td><b> Кол-во, шт. </b></td>
-            <td><b> Остаток на складе, шт. </b></td>
-            <td><b> Цена за единицу, руб. </b></td>
-            <td><b> Скидка, % </b></td>
-            <td><b> Итоговая стоимость, руб. </b></td>
-        </thead>";
-
-/* Таблица */
-foreach ($bd as $key => $value) {
-    echo "<tr>
-            <td>" . $key . "</td>
-            <td>" . $value['количество заказано'] . "</td>
-            <td>" . $value['осталось на складе'] . "</td>
-            <td>" . $value['цена'] . "</td>            
-            <td>" . $tableData[$key]['скидка'] . "</td>
-            <td>" . $tableData[$key]['стоимость'] . "</td>
-         </tr>";
+/* Проверка была ли нажата кнопка "удалить". И если да, то какая именно. */
+function checkDelButtonClick() {
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'delete')!==false)
+            return str_replace('delete', '', $key);
+    }
+    return false;
 }
-echo "</table>";
-
-/* Итого */
-echo "<br><font size = 4><b> Итого: </b></font>" .
-     "<br>Наименований заказано: " . $typesTotal .
-     "<br>Общее кол-во товаров: " . $amountTotal .
-     "<br>Общая сумма заказа: " . $priceTotal . "<br>";
-
-/* Уведомления */
-printNotifications($notifications); 
-
-/* Скидки */
-if ($amountForPay['игрушка детская велосипед'] >= 3) {
-    echo "<br><font size = 3><b> Скидки: </b></font>" .
-         "<br>-При покупке от 3шт. товара \"игрушка детская велосипед\" Вам предоставляется скидка 30%";
-}
+            
 ?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Lesson 6</title>
+        <style>
+            .table1 {
+                table-layout: fixed;        /* Фиксированная ширина ячеек */
+                border-collapse: collapse;  /* Отображение рамки */
+                width: 580px;               /* Ширина таблицы */    
+            }
+            .col1_1 { width: 180px; }      
+            .col1_2 { width: 400px; }                  
+            .table2 {
+                table-layout: fixed;        /* Фиксированная ширина ячеек */
+                border-collapse: collapse;  /* Отображение рамки */
+                width: 800px;               /* Ширина таблицы */    
+            }
+            .col2_1 { width: 60px; }      
+            .col2_2 { width: 30px; }      
+            .col2_3 { width: 200px; }      
+            .col2_4 { width: 35px; }      
+        </style>
+    </head>
+    <body>
+        <?php
+        session_start();
+        $data = isset($_GET['id']) ? FillData($_GET['id']) : FillData();
+        $delbuttonnumb = checkDelButtonClick();
+
+        if (isset($_POST['submit'])) {
+            if (checkForm($data)) {
+                $_SESSION['ads'][] = $data;
+                $data = FillData();
+            }
+        }     
+        elseif ($delbuttonnumb!==false) {
+            unset($_SESSION['ads'][$delbuttonnumb]);    
+            header("Location: /");      /* Возврат на первоначальную страницу без параметров $_GET */
+        }
+        showForm($data);
+        showSessionList();
+        ?>    
+    </body>
+</html>
+
