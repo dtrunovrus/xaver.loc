@@ -4,18 +4,33 @@ ini_set('display_errors', 1);
 
 /* Lesson 6 */
 
+/**
+ * @param $session $_SESSION
+ * @param $get $_GET
+ * @return string
+ */
+function getAdById($session, $get) {
+    $out = '';
+    if(isset($get['id'])){
+        $id = $get['id'];
+        $out = isset($session['ads'][$id])? $session['ads'][$id] : '';
+    }
+    return $out;
+}
+
 /* Заполнение $data данными из массива $_SESSION по id  */
-function FillData($id = '') {
-    $data['private']        = ($id!=='') ? $_SESSION['ads'][$id]['private']        : 1;
-    $data['seller_name']    = ($id!=='') ? $_SESSION['ads'][$id]['seller_name']    : '';
-    $data['email']          = ($id!=='') ? $_SESSION['ads'][$id]['email']          : '';
-    $data['allow_mails']    = ($id!=='') ? $_SESSION['ads'][$id]['allow_mails']    : 0;
-    $data['phone']          = ($id!=='') ? $_SESSION['ads'][$id]['phone']          : '';
-    $data['city']           = ($id!=='') ? $_SESSION['ads'][$id]['city']           : '';
-    $data['category']       = ($id!=='') ? $_SESSION['ads'][$id]['category']       : '';
-    $data['title']          = ($id!=='') ? $_SESSION['ads'][$id]['title']          : '';
-    $data['description']    = ($id!=='') ? $_SESSION['ads'][$id]['description']    : '';
-    $data['price']          = ($id!=='') ? $_SESSION['ads'][$id]['price']          : 0;
+function FillData($ad = '', $dataId = 0) {
+    $data['data_id']        = ($ad) ? $ad['data_id']        : $dataId;
+    $data['private']        = ($ad) ? $ad['private']        : 1;
+    $data['seller_name']    = ($ad) ? $ad['seller_name']    : '';
+    $data['email']          = ($ad) ? $ad['email']          : '';
+    $data['allow_mails']    = ($ad) ? $ad['allow_mails']    : 0;
+    $data['phone']          = ($ad) ? $ad['phone']          : '';
+    $data['city']           = ($ad) ? $ad['city']           : '';
+    $data['category']       = ($ad) ? $ad['category']       : '';
+    $data['title']          = ($ad) ? $ad['title']          : '';
+    $data['description']    = ($ad) ? $ad['description']    : '';
+    $data['price']          = ($ad) ? $ad['price']          : 0;
     return $data;
 }
 
@@ -151,53 +166,30 @@ function showForm($data) {
                 <td> 
                     <input type="text" maxlength="9" value="<?php echo $data['price']?>" name="price" id="fld_price">&nbsp;<span id="fld_price_title">руб.</span>  <td></tr>          
         </table> <br/>
+        <input type="hidden" value="<?php $data['data_id']?>" id="<?php echo 'ad'.$data['data_id'].'hidden_info'?>" name="loadAd" > 
         <input type="submit" value="Подтвердить" id="form_submit" name="submit" >
     </form>    
 <?php
 }
 
 /* Проверка заполнения всех параметров формы */
-function checkForm(&$data) {    
-    $data['private']        = $_POST['private'];    
-    $data['seller_name']    = $_POST['seller_name'];    
-    $data['email']          = $_POST['email'];
-    $data['allow_mails']    = isset($_POST['allow_mails']) ? 1 : 0;    
-    $data['phone']          = $_POST['phone'];
-    $data['city']           = isset($_POST['city']) ? $_POST['city'] : '';    
-    $data['category']       = isset($_POST['category']) ? $_POST['category'] : ''; 
-    $data['title']          = $_POST['title'];    
-    $data['description']    = $_POST['description'];    
-    $data['price']          = (float)$_POST['price'];          
+function checkForm($post, &$data) {    
+
+    $post['data_id']        = isset($data['data_id']) ? $data['data_id'] : 0;
+    $post['allow_mails']    = isset($post['allow_mails']) ? 1 : 0;
+    $post['city']           = isset($post['city']) ? $post['city'] : '';
+    $post['category']       = isset($post['category']) ? $post['category'] : '';
+    
+    $data = FillData($post);
     
     $errorList = array();
     if ($data['seller_name']=='') {
         $errorList[] = 'Укажите Ваше имя';
     }    
-    if ($data['email']=='') {
-        $errorList[] = 'Укажите Ваш адрес электронной почты';
-    }
-    if ($data['phone']=='') {
-        $errorList[] = 'Укажите Ваш контактный телефон';
-    }
-    else if (!is_numeric($data['phone'])) {
-        $errorList[] = 'В номере телефона должны быть только цифры';
-    }
-    if ($data['city']=='') {
-        $errorList[] = 'Укажите город Вашего проживания';
-    }    
-    if ($data['category']=='') {
-        $errorList[] = 'Укажите категорию Вашего объявления';
-    }    
     if ($data['title']=='') {
         $errorList[] = 'Укажите название объявления';
-    }    
-    if ($data['description']=='') {
-        $errorList[] = 'Укажите описание объявления';
     }
-    if ($data['price']=='0') {
-        $errorList[] = 'Укажите цену в рублях';
-    }
-    else if (!is_numeric($data['price'])) {
+    if (!is_numeric($data['price'])) {
         $errorList[] = 'Цену нужно указывать цифрами';
     }
     if (count($errorList)) {
@@ -212,8 +204,8 @@ function checkForm(&$data) {
 }
 
 /* Вывод всех объявления в $_SESSION */
-function showSessionList() {
-    if (isset($_SESSION['ads']) && count($_SESSION['ads'])) {
+function showSessionList($session) {
+    if (isset($session['ads']) && count($session['ads'])) {
         ?>
         <br/><b>Введённые объявления:</b><br/>
         <form id = 'sessionForm' method='post' name = 'sessionForm'>
@@ -223,7 +215,7 @@ function showSessionList() {
         <col class="col2_3">
         <col class="col2_4">        
         <?php              
-        foreach ($_SESSION['ads'] as $key => $value) { 
+        foreach ($session['ads'] as $key => $value) { 
         ?>
         <tr><td> <a href= "?id=<?php echo $key."\"> ".$value['title']?></a> </td>
             <td> <?php echo $value['price']?> </td>
@@ -234,7 +226,20 @@ function showSessionList() {
         echo "</table></form> <br/>";        
     }    
 }
-            
+
+/* Get next dataId sequence value */
+function getSequenceValue($session) {
+    $seqValue = 0;
+    $idList = array();
+    if (isset($session['ads']) && count($session['ads'])) {
+        foreach ($session['ads'] as $value) {
+            $idList[] = $value['data_id'];
+        }
+        $seqValue = max($idList) + 1;
+    }  
+    return $seqValue;
+}        
+
 ?>
 
 <!DOCTYPE html>
@@ -264,28 +269,33 @@ function showSessionList() {
     <body>
         <?php
         session_start();
-        $data = isset($_GET['id']) ? FillData($_GET['id']) : FillData();        
+        
+        $dataId = getSequenceValue($_SESSION);    /* dataId sequence */
+        
+        $ad = getAdById($_SESSION, $_GET);
+        $data = FillData($ad, $dataId);
 
         if (isset($_POST['submit'])) {
-            if (checkForm($data)) {
-                if(isset($_GET['id'])) {
-                    $_SESSION['ads'][$_GET['id']] = $data;                    
+            if (checkForm($_POST, $data)) {                
+                if(isset($_SESSION['ads'][$data['data_id']]) && 
+                   $_SESSION['ads'][$data['data_id']]['data_id']==$data['data_id']) {
+                    $_SESSION['ads'][$data['data_id']] = $data;                    
                 }
                 else {
-                    $_SESSION['ads'][] = $data;
+                    $_SESSION['ads'][] = $data;                    
                 }
                 $data = FillData();
-                header("Location: /");      /* Возврат на первоначальную страницу без параметров $_GET */
+                header("Location: http://xaver.loc");      /* Возврат на первоначальную страницу без параметров $_GET */
             }
         }     
         
         if (isset($_GET['del_id'])) {
             unset($_SESSION['ads'][$_GET['del_id']]);    
-            header("Location: /");      /* Возврат на первоначальную страницу без параметров $_GET */
+            header("Location: http://xaver.loc");      /* Возврат на первоначальную страницу без параметров $_GET */
         }
         
         showForm($data);
-        showSessionList();
+        showSessionList($_SESSION);
         ?>    
     </body>
 </html>
