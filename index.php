@@ -12,6 +12,7 @@ function FillData($id = '') {
     $data['allow_mails']    = ($id!=='') ? $_SESSION['ads'][$id]['allow_mails']    : 0;
     $data['phone']          = ($id!=='') ? $_SESSION['ads'][$id]['phone']          : '';
     $data['city']           = ($id!=='') ? $_SESSION['ads'][$id]['city']           : '';
+    $data['category']       = ($id!=='') ? $_SESSION['ads'][$id]['category']       : '';
     $data['title']          = ($id!=='') ? $_SESSION['ads'][$id]['title']          : '';
     $data['description']    = ($id!=='') ? $_SESSION['ads'][$id]['description']    : '';
     $data['price']          = ($id!=='') ? $_SESSION['ads'][$id]['price']          : 0;
@@ -24,7 +25,62 @@ function showForm($data) {
                     '641600'=>'Искитим', '641630'=>'Колывань','641680'=>'Краснообск',
                     '641710'=>'Куйбышев','641760'=>'Мошково','641790'=>'Обь',
                     '641800'=>'Ордынское','641970'=>'Черепаново');
+    $categories = array ('Транспорт'=>array('9'=>'Автомобили с пробегом',
+                                            '109'=>'Новые автомобили',
+                                            '14'=>'Мотоциклы и мототехника',
+                                            '81'=>'Грузовики и спецтехника',
+                                            '11'=>'Водный транспорт',
+                                            '10'=>'Запчасти и аксессуары'),
+                         'Недвижимость'=>array( '24'=>'Квартиры',
+                                                '23'=>'Комнаты',
+                                                '25'=>'Дома, дачи, коттеджи',
+                                                '26'=>'Земельные участки',
+                                                '85'=>'Гаражи и машиноместа',
+                                                '42'=>'Коммерческая недвижимость',
+                                                '86'=>'Недвижимость за рубежом'),
+                         'Работа'=>array('111'=>'Вакансии (поиск сотрудников)',
+                                         '112'=>'Резюме (поиск работы)'),        
+                         'Услуги'=>array('114'=>'Предложения услуг',
+                                         '115'=>'Запросы на услуги'),        
+                         'Личные вещи'=>array ( '27'=>'Одежда, обувь, аксессуары',
+                                                '29'=>'Детская одежда и обувь',     
+                                                '30'=>'Товары для детей и игрушки',     
+                                                '28'=>'Часы и украшения',     
+                                                '88'=>'Красота и здоровье'),     
+                         'Для дома и дачи'=>array ( '21'=>'Бытовая техника',
+                                                    '20'=>'Мебель и интерьер',     
+                                                    '87'=>'Посуда и товары для кухни',     
+                                                    '82'=>'Продукты питания',     
+                                                    '19'=>'Ремонт и строительство',     
+                                                    '106'=>'Растения'),
+                         'Бытовая электроника'=>array ( '32'=>'Аудио и видео',
+                                                        '97'=>'Игры, приставки и программы',     
+                                                        '31'=>'Настольные компьютеры',     
+                                                        '98'=>'Ноутбуки',     
+                                                        '99'=>'Оргтехника и расходники',     
+                                                        '96'=>'Планшеты и электронные книги',
+                                                        '84'=>'Телефоны',
+                                                        '101'=>'Товары для компьютера',
+                                                        '105'=>'Фототехника'),        
+                         'Хобби и отдых'=>array('33'=>'Билеты и путешествия',
+                                                '34'=>'Велосипеды',
+                                                '83'=>'Книги и журналы',     
+                                                '36'=>'Коллекционирование',     
+                                                '38'=>'Музыкальные инструменты',     
+                                                '102'=>'Охота и рыбалка',
+                                                '39'=>'Спорт и отдых',
+                                                '103'=>'Знакомства'),
+                         'Животные'=>array( '89'=>'Собаки',
+                                            '90'=>'Кошки',
+                                            '91'=>'Птицы',     
+                                            '92'=>'Аквариум',
+                                            '93'=>'Другие животные',
+                                            '94'=>'Товары для животных'),
+                         'Для бизнеса'=>array ( '116'=>'Готовый бизнес',
+                                                '40'=>'Оборудование для бизнеса')); 
+    
     $cityIsChecked = ($data['city']=='')?false:true;
+    $categoryIsChecked = ($data['category']=='')?false:true;
     ?>
     <form  id = 'anketForm' method="post" name = 'anketForm'>  
         <table border = "0" class = "table1">
@@ -33,52 +89,67 @@ function showForm($data) {
             <tr> 
                 <td></td>
                 <td>
-                    <label><input type="radio" <?echo ($data['private']==1)?" checked=\"\"" : "" ?>checked="" value="1" name="private">Частное лицо</label> <label><input type="radio" <? echo ($data['private']==0)?" checked=\"\"" : "" ?>value="0" name="private">Компания</label> </td></tr>
+                    <label><input type="radio" <?php echo ($data['private']==1)?" checked=\"\"" : "" ?>checked="" value="1" name="private">Частное лицо</label> <label><input type="radio" <?php echo ($data['private']==0)?" checked=\"\"" : "" ?>value="0" name="private">Компания</label> </td></tr>
             <tr>
                 <td>
                     <b id="seller_name">Ваше имя</b> </td>    
                 <td> 
-                <input type="text" maxlength="40" value="<? echo $data['seller_name'] ?>" name="seller_name" id="fld_seller_name"> <td></tr>
+                <input type="text" maxlength="40" value="<?php echo $data['seller_name'] ?>" name="seller_name" id="fld_seller_name"> <td></tr>
             <tr>
                 <td>
                     <b id="email">Электронная почта</b> </td>    
                 <td> 
-                <input type="text" value="<? echo $data['email'] ?>" name="email" id="fld_email"> <td></tr>
+                <input type="text" value="<?php echo $data['email'] ?>" name="email" id="fld_email"> <td></tr>
             <tr>
                 <td></td>    
                 <td> 
-                    <label for="allow_mails"> <input type="checkbox" <?echo ($data['allow_mails']==1)?" checked=\"\"" : "" ?> value="0" name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> </label> <td></tr>
+                    <label for="allow_mails"> <input type="checkbox" <?php echo ($data['allow_mails']==1)?" checked=\"\"" : "" ?> value="0" name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> </label> <td></tr>
             <tr>
                 <td>
                     <label id="fld_phone_label" for="fld_phone"><b>Номер телефона</b></label> </td>
                 <td> 
-                <input type="text" value="<? echo $data['phone'] ?>" name="phone" id="fld_phone"> <td></tr>
+                <input type="text" value="<?php echo $data['phone'] ?>" name="phone" id="fld_phone"> <td></tr>
             <tr>
                 <td>
                     <label for="region"><b>Город</b></label> </td>
                 <td>
                     <select title="Выберите Ваш город" name="city" id="region" >            
-                        <option disabled="disabled" <?echo $cityIsChecked?"\"\"":"selected=\"\""?> >-- Выберите город --</option>
-                        <?
+                        <option disabled="disabled" <?php echo $cityIsChecked?"\"\"":"selected=\"\""?> >-- Выберите город --</option>
+                        <?php
                         foreach ($cities as $key=>$value) {
                             $selected = ($key==$data['city']) ? 'selected=""' : ''; 
                             echo '<option data-coords=",," '.$selected.' value="'.$key.'">'.$value.'</option>';
                         }?>                            
             <tr>
                 <td>
+                    <label for="region"><b>Категория</b></label> </td>
+                <td>
+                    <select title="Выберите категорию объявления" name="category" id="region" >            
+                        <option disabled="disabled" <?php echo $categoryIsChecked?"\"\"":"selected=\"\""?> >-- Выберите категорию объявления --</option>
+                        <?php
+                        foreach ($categories as $key=>$value) {
+                            echo '<optgroup label='.$key.'>';
+                            foreach ($value as $categoryId=>$categoryName) {
+                                $selected = ($categoryId==$data['category']) ? 'selected=""' : ''; 
+                                echo '<option '.$selected.' value="'.$categoryId.'">'.$categoryName.'</option>';
+                            }
+                            echo '</optgroup> ';
+                        }?>                                        
+            <tr>
+                <td>
                     <label for="fld_title"><b>Название объявления</b></label> </td>    
                 <td> 
-                <input type="text" maxlength="50" value="<? echo $data['title'] ?>" name="title" id="fld_title"> <td></tr>
+                <input type="text" maxlength="50" value="<?php echo $data['title'] ?>" name="title" id="fld_title"> <td></tr>
             <tr>
                 <td>
                     <label for="fld_description"><b>Описание объявления</b></label> </td>    
                 <td> 
-                    <textarea maxlength="200"  name="description" id="fld_description"><? echo $data['description'] ?></textarea> <td></tr>
+                    <textarea maxlength="200"  name="description" id="fld_description"><?php echo $data['description'] ?></textarea> <td></tr>
             <tr>
                 <td>
                     <label id="price_lbl" for="fld_price"><b>Цена</b></label> </td>    
                 <td> 
-                    <input type="text" maxlength="9" value="<?echo $data['price']?>" name="price" id="fld_price">&nbsp;<span id="fld_price_title">руб.</span>  <td></tr>          
+                    <input type="text" maxlength="9" value="<?php echo $data['price']?>" name="price" id="fld_price">&nbsp;<span id="fld_price_title">руб.</span>  <td></tr>          
         </table> <br/>
         <input type="submit" value="Подтвердить" id="form_submit" name="submit" >
     </form>    
@@ -93,6 +164,7 @@ function checkForm(&$data) {
     $data['allow_mails']    = isset($_POST['allow_mails']) ? 1 : 0;    
     $data['phone']          = $_POST['phone'];
     $data['city']           = isset($_POST['city']) ? $_POST['city'] : '';    
+    $data['category']       = isset($_POST['category']) ? $_POST['category'] : ''; 
     $data['title']          = $_POST['title'];    
     $data['description']    = $_POST['description'];    
     $data['price']          = (float)$_POST['price'];          
@@ -112,6 +184,9 @@ function checkForm(&$data) {
     }
     if ($data['city']=='') {
         $errorList[] = 'Укажите город Вашего проживания';
+    }    
+    if ($data['category']=='') {
+        $errorList[] = 'Укажите категорию Вашего объявления';
     }    
     if ($data['title']=='') {
         $errorList[] = 'Укажите название объявления';
@@ -150,23 +225,14 @@ function showSessionList() {
         <?php              
         foreach ($_SESSION['ads'] as $key => $value) { 
         ?>
-        <tr><td> <a href= "?id=<?echo $key."\"> ".$value['title']?></a> </td>
-            <td> <?echo $value['price']?> </td>
-            <td> <?echo $value['seller_name']?> </td>
-            <td> <input type="submit" value="Удалить" id="session_delete" name=<?echo "delete".$key?>></td></tr>
-        <?
+        <tr><td> <a href= "?id=<?php echo $key."\"> ".$value['title']?></a> </td>
+            <td> <?php echo $value['price']?> </td>
+            <td> <?php echo $value['seller_name']?> </td>
+            <td> <a href= "?del_id=<?php echo $key."\"> Удалить"?></a> </td></tr>            
+        <?php
         }
         echo "</table></form> <br/>";        
     }    
-}
-
-/* Проверка была ли нажата кнопка "удалить". И если да, то какая именно. */
-function checkDelButtonClick() {
-    foreach ($_POST as $key => $value) {
-        if (strpos($key, 'delete')!==false)
-            return str_replace('delete', '', $key);
-    }
-    return false;
 }
             
 ?>
@@ -198,22 +264,28 @@ function checkDelButtonClick() {
     <body>
         <?php
         session_start();
-        $data = isset($_GET['id']) ? FillData($_GET['id']) : FillData();
-        $delbuttonnumb = checkDelButtonClick();
+        $data = isset($_GET['id']) ? FillData($_GET['id']) : FillData();        
 
         if (isset($_POST['submit'])) {
             if (checkForm($data)) {
-                $_SESSION['ads'][] = $data;
+                if(isset($_GET['id'])) {
+                    $_SESSION['ads'][$_GET['id']] = $data;                    
+                }
+                else {
+                    $_SESSION['ads'][] = $data;
+                }
                 $data = FillData();
+                header("Location: /");      /* Возврат на первоначальную страницу без параметров $_GET */
             }
         }     
-        elseif ($delbuttonnumb!==false) {
-            unset($_SESSION['ads'][$delbuttonnumb]);    
+        
+        if (isset($_GET['del_id'])) {
+            unset($_SESSION['ads'][$_GET['del_id']]);    
             header("Location: /");      /* Возврат на первоначальную страницу без параметров $_GET */
         }
+        
         showForm($data);
         showSessionList();
         ?>    
     </body>
 </html>
-
