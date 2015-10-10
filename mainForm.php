@@ -1,7 +1,3 @@
-<?php 
-include 'arrays.php';
-?>
-
 <form  id = 'anketForm' method="post" name = 'anketForm'>  
         <table border = "0" class = "table1">
             <col class="col1_1">
@@ -34,7 +30,7 @@ include 'arrays.php';
                     <label for="region"><b>Город</b></label> </td>
                 <td>
                     <select title="Выберите Ваш город" name="city" id="region" >            
-                        <option disabled="disabled" <?php echo $cityIsChecked?"\"\"":"selected=\"\""?> >-- Выберите город --</option>
+                        <option>-- Выберите город --</option>
                         <?php
                         foreach ($cities as $key=>$value) {
                             $selected = ($key==$data['city']) ? 'selected=""' : ''; 
@@ -45,7 +41,7 @@ include 'arrays.php';
                     <label for="region"><b>Категория</b></label> </td>
                 <td>
                     <select title="Выберите категорию объявления" name="category" id="region" >            
-                        <option disabled="disabled" <?php echo $categoryIsChecked?"\"\"":"selected=\"\""?> >-- Выберите категорию объявления --</option>
+                        <option>-- Выберите категорию объявления --</option>
                         <?php
                         foreach ($categories as $key=>$value) {
                             echo '<optgroup label='.$key.'>';

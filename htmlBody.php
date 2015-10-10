@@ -23,5 +23,11 @@
         </style>
     </head>
     <body>
+        <?php
+        require_once 'mainForm.php';
+        if (isset($_SESSION['ads']) && count($_SESSION['ads'])) {
+            require_once 'sessionList.php';
+        }            
+        ?>
     </body>
 </html>

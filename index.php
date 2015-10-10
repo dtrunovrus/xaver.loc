@@ -37,13 +37,6 @@ function fillData($ad = '') {
     return $data;
 }
 
-/* Вывод основной формы */
-function showForm($data) {      
-    $cityIsChecked = ($data['city']=='')?false:true;
-    $categoryIsChecked = ($data['category']=='')?false:true;
-    include 'mainForm.php';
-}
-
 /* Проверка заполнения всех параметров формы */
 function checkForm($data) {        
     $errorList = array();
@@ -67,14 +60,6 @@ function checkForm($data) {
     return true;
 }
 
-/* Вывод всех объявления в $_SESSION */
-function showSessionList($session) {
-    if (isset($session['ads']) && count($session['ads'])) {
-        include 'sessionList.php';     
-    }    
-}
-
-include 'htmlBody.php';
 session_start();
 $showAd = '';
 
@@ -102,5 +87,4 @@ if (isset($_POST['submit'])) {
 }
 
 $data = fillData($showAd);
-showForm($data);
-showSessionList($_SESSION);
+require_once 'htmlBody.php';
