@@ -1,3 +1,7 @@
+<?php 
+include 'arrays.php';
+?>
+
 <form  id = 'anketForm' method="post" name = 'anketForm'>  
         <table border = "0" class = "table1">
             <col class="col1_1">
