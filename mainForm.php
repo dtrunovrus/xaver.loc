@@ -19,7 +19,7 @@
             <tr>
                 <td></td>    
                 <td> 
-                    <label for="allow_mails"> <input type="checkbox" <?php echo ($data['allow_mails']==1)?" checked=\"\"" : "" ?> value="0" name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> </label> <td></tr>
+                    <label for="allow_mails"> <input type="checkbox" <?php echo ($data['allow_mails']==1)?" checked=\"\"" : "" ?> value="1" name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> </label> <td></tr>
             <tr>
                 <td>
                     <label id="fld_phone_label" for="fld_phone"><b>Номер телефона</b></label> </td>
