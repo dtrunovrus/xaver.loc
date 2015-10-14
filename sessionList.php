@@ -3,15 +3,13 @@
     <col class="col2_1">
     <col class="col2_2">
     <col class="col2_3">
-    <col class="col2_4">        
-    <?php
-    foreach ($_SESSION['ads'] as $key => $value) {
-        ?>
-        <tr><td> <a href= "?id=<?php echo $key . "\"> " . $value['title'] ?></a> </td>
-                    <td> <?php echo $value['price'] ?> </td>
-                    <td> <?php echo $value['seller_name'] ?> </td>
-                    <td> <a href= "?del_id=<?php echo $key . "\"> Удалить" ?></a> </td></tr>            
-        <?php
-    }
-    echo "</table><br/>";
-    ?>
+    <col class="col2_4">  
+    
+    {foreach from=$adList.ads key=ad item=value}        
+    <tr><td> <a href= "?id={$ad}">{$value.title}</a> </td>
+        <td>{$value.price}</td>
+        <td>{$value.seller_name}</td>
+        <td> <a href= "?del_id={$ad}"> Удалить</a> </td></tr>            
+    {/foreach}
+    </table><br/>
+    

@@ -52,4 +52,15 @@ function checkForm($data) {
     }
     return true;
 }
+
+/* Получение массива объявлений из файла */
+function getAdListFromFile($fileName) {
+    $adList = array();
+    if (file_exists($fileName)) {
+        $fileContent = file_get_contents($fileName);
+        $adList = unserialize($fileContent);        
+    }
+    return $adList;
+}
+
 ?>
