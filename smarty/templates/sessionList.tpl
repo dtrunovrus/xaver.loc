@@ -8,7 +8,7 @@
     {foreach from=$adList.ads key=ad item=value}        
     <tr><td> <a href= "?id={$ad}">{$value.title}</a> </td>
         <td>{$value.price}</td>
-        <td>{$value.seller_name}</td>
+        <td>{$value.seller_name|replace:'<':'&lt;'|replace:'>':'&gt;'}</td>
         <td> <a href= "?del_id={$ad}"> Удалить</a> </td></tr>            
     {/foreach}
     </table><br/>
