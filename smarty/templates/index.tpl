@@ -1,9 +1,9 @@
 {include file='header.tpl'}
 
-{include file="$project_root/mainForm.php"}
+{include file="mainForm.tpl"}
 
 {if isset($adList.ads) && count($adList.ads)} 
-    {include file="$project_root/sessionList.php"}    
+    {include file="sessionList.tpl"}    
 {/if}
 
 {include file='footer.tpl'}
