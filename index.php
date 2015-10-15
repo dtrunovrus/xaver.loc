@@ -3,8 +3,7 @@ error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
 /* Lesson 8 */
-$project_root=$_SERVER['DOCUMENT_ROOT'];
-$smarty_dir=$project_root.'/smarty/';
+$smarty_dir='./smarty/';
 
 require($smarty_dir.'/libs/Smarty.class.php');
 
@@ -52,7 +51,6 @@ if (file_put_contents($fileName, serialize($adList))===false) {
 }        
 $data = fillData($showAd);
 
-$smarty->assign('project_root', $project_root);
 $smarty->assign('cities', $cities);
 $smarty->assign('categories', $categories);
 $smarty->assign('data', $data);

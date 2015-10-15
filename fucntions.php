@@ -12,10 +12,16 @@ function getAdById($session, $id) {
     return $out;
 }
 
+function removeTags($str) {
+    $result = str_replace('<', '&lt;', $str);
+    $result = str_replace('>', '&gt;', $result);
+    return $result;
+}
+
 /* Заполнение $data данными из массива */
 function fillData($ad = '') {
     $data['private']        = ($ad) ? $ad['private']        : 1;
-    $data['seller_name']    = ($ad) ? $ad['seller_name']    : '';
+    $data['seller_name']    = ($ad) ? removeTags($ad['seller_name'])    : '';
     $data['email']          = ($ad) ? $ad['email']          : '';    
     $data['title']          = ($ad) ? $ad['title']          : '';    
     $data['phone']          = ($ad) ? $ad['phone']          : '';
