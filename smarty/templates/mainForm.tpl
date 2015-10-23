@@ -5,7 +5,7 @@
             <tr> 
                 <td></td>
                 <td>
-                    <label><input type="radio" {if !isset($data.private) || $data.private==1} " checked=\"\" " {else} "" {/if} value="1" name="private">Частное лицо</label> <label><input type="radio" {if $data.private==0} " checked=\"\" " {else} "" {/if} value="0" name="private">Компания</label> </td></tr>
+                    <label><input type="radio" {if !isset($data.physical) || $data.physical==1} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо</label> <label><input type="radio" {if $data.physical==0} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания</label> </td></tr>
             <tr>
                 <td>
                     <b id="seller_name">Ваше имя</b> </td>    
@@ -62,6 +62,6 @@
                 <td> 
                     <input type="text" maxlength="9" value="{$data.price}" name="price" id="fld_price">&nbsp;<span id="fld_price_title">руб.</span>  <td></tr>          
         </table> <br/>        
-        <input type="hidden" value={if isset($data.data_id)} "{$data.data_id}"  {else} '' {/if} id="ad_hidden_info" name="data_id" > 
+        <input type="hidden" value={if isset($data.show_id)} "{$data.show_id}"  {else} '' {/if} id="ad_hidden_info" name="show_id" > 
         <input type="submit" value="Подтвердить" id="form_submit" name="submit" >
     </form>    

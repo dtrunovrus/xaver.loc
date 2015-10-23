@@ -2,7 +2,7 @@
 error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 8 */
+/* Lesson 9 */
 $smarty_dir='./smarty/';
 
 require($smarty_dir.'/libs/Smarty.class.php');
@@ -15,40 +15,45 @@ $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
-include 'arrays.php';
 include 'fucntions.php';
 
-$showAd = '';
-$fileName = 'adList.txt';
-$adList = getAdListFromFile($fileName);
+$db = mysql_connect('localhost', 'test', '123') or die('Не удалось установить соединение с сервером БД '.mysql_error());
+
+mysql_select_db('test', $db) or die('Не удалось выбрать БД '.mysql_error());
+mysql_query('SET NAMES UTF8');
+
+$cities = getCitiesFromDb($db);
+$categories = getCategoriesFromDb($db);
+$adList = getAdListFromDb($db);
+
+$showAd = ''; 
 
 if (isset($_POST['submit'])) {
     $data = fillData($_POST);
     if (checkForm($data)) {        
-        if (isset($data['data_id'])) {
-            $id = $data['data_id'];
-            unset($data['data_id']);
-            $adList['ads'][$id] = $data;
+        if (isset($data['show_id'])) {
+            $id = $data['show_id'];
+            unset($data['show_id']);
+            $result = updateAdInDb($db, $id, $data);            
         } else {
-            $adList['ads'][] = $data;
+            $result = insertAdIntoDb($db, $data);
+        }    
+        if($result) {
+            header("Location: ./");                    
         }        
-        header("Location: ./");
     } else {
         $showAd = $_POST;
-    }
+    }    
 } elseif (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $showAd = getAdById($adList, $id);
-    $showAd['data_id'] = $_GET['id'];
+    $showAd = getAdFromDb($db, $id);    
+    $showAd['show_id'] = $_GET['id'];    
 } elseif (isset($_GET['del_id'])) {
     $del_id = $_GET['del_id'];
-    unset($adList['ads'][$del_id]);
+    deleteAdFromDb ($db, $del_id);    
     header("Location: ./");
 }
-
-if (file_put_contents($fileName, serialize($adList))===false) {
-    echo "Ошибка записи в файл. <br>";
-}        
+   
 $data = fillData($showAd);
 
 $smarty->assign('cities', $cities);
