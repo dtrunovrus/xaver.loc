@@ -3,6 +3,7 @@ error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
 /* Lesson 9 */
+
 $smarty_dir='./smarty/';
 
 require($smarty_dir.'/libs/Smarty.class.php');
@@ -16,8 +17,13 @@ $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
 include 'fucntions.php';
+session_start();
+$server_name = isset($_SESSION['server_name']) ? $_SESSION['server_name'] : '';
+$user_name   = isset($_SESSION['user_name'])   ? $_SESSION['user_name']   : '';
+$password    = isset($_SESSION['password'])    ? $_SESSION['password']    : '';
+$database    = isset($_SESSION['database'])    ? $_SESSION['database']    : '';
 
-$db = mysql_connect('localhost', 'test', '123') or die('Не удалось установить соединение с сервером БД '.mysql_error());
+$db = mysql_connect($server_name, $user_name, $password) or die('Не удалось установить соединение с сервером БД '.mysql_error());
 
 mysql_select_db('test', $db) or die('Не удалось выбрать БД '.mysql_error());
 mysql_query('SET NAMES UTF8');

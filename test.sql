@@ -102,7 +102,15 @@ INSERT INTO `category_groups` (`id`, `name`) VALUES
 (7,	'Бытовая электроника'),
 (8,	'Хобби и отдых'),
 (9,	'Животные'),
-(10,	'Для бизнеса');
+(10,	'Для бизнеса'),
+(9999,	'Разное');
+
+DELIMITER ;;
+
+CREATE TRIGGER `category_groups_bd` BEFORE DELETE ON `category_groups` FOR EACH ROW
+UPDATE categories cat SET cat.groupid = 9999 WHERE cat.groupid = old.id;;
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS `cities`;
 CREATE TABLE `cities` (
@@ -124,4 +132,4 @@ INSERT INTO `cities` (`id`, `name`) VALUES
 (641800,	'Ордынское'),
 (641970,	'Черепаново');
 
--- 2015-10-23 16:56:31
+-- 2015-10-27 16:05:04

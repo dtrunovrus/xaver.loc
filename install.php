@@ -51,7 +51,12 @@ if (isset($_POST['install_submit'])) {
         }     
     }       
 }
-
+session_start();
+$_SESSION['server_name']    = $server_name;
+$_SESSION['user_name']      = $user_name;
+$_SESSION['password']       = $password;
+$_SESSION['database']       = $database;    
+        
 $smarty->assign('server_name', $server_name);
 $smarty->assign('user_name', $user_name);
 $smarty->assign('password', $password);
