@@ -30,12 +30,14 @@ if (isset($_POST['install_submit'])) {
         Echo 'Не все поля заполнены! </br>';
     }
     else {
-        $db = mysql_connect($server_name, $user_name, $password) or die('Не удалось установить соединение с сервером БД '.mysql_error().'</br>');
-        mysql_select_db($database, $db) or die('Не удалось выбрать БД '.mysql_error().'</br>');
-        mysql_query('SET NAMES UTF8');
-        $query = 'DROP TABLE IF EXISTS ads, categories, category_groups, cities';
-        if (!mysql_query($query)) {
-            echo 'Не удалось удалить таблицы '.mysql_error().'</br>';
+        $db = new mysqli($server_name, $user_name, $password, $database);
+        if($db->connect_errno > 0){
+            die('Не удалось установить соединение с БД ['. $db->connect_error. ']');
+        }        
+        $db->query('SET NAMES UTF8'); 
+        $result = $db -> query('DROP TABLE IF EXISTS ads, categories, category_groups, cities');        
+        if (!$result) {
+            echo 'Не удалось удалить таблицы '.$db->errno.'</br>';
             exit();
         }
         $command = 'mysql -h' .$server_name .' -u' .$user_name .' -p' .$password .' ' .$database .' < ' .$dumpFile;

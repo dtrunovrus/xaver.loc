@@ -17,7 +17,7 @@ $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
-include 'fucntions.php';
+include 'functions.php';
 
 $connectInfo = [];
 if (file_exists($connectFile)) {
@@ -32,10 +32,11 @@ $user_name   = isset($connectInfo['user_name'])     ? $connectInfo['user_name'] 
 $password    = isset($connectInfo['password'])      ? $connectInfo['password']    : '';
 $database    = isset($connectInfo['database'])      ? $connectInfo['database']    : '';
 
-$db = mysql_connect($server_name, $user_name, $password) or die('Не удалось установить соединение с сервером БД '.mysql_error());
-
-mysql_select_db($database, $db) or die('Не удалось выбрать БД '.mysql_error());
-mysql_query('SET NAMES UTF8');
+$db = new mysqli($server_name, $user_name, $password, $database);
+if($db->connect_errno > 0){
+    die('Не удалось установить соединение с БД ['. $db->connect_error.']');
+}
+$db->query('SET NAMES UTF8');        
 
 $cities     = getCitiesFromDb($db);
 $categories = getCategoriesFromDb($db);
