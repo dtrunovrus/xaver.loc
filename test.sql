@@ -14,7 +14,7 @@ CREATE TABLE `ads` (
   `title` varchar(50) NOT NULL,
   `phone` varchar(11) NOT NULL,
   `description` varchar(200) NOT NULL,
-  `price` double NOT NULL,
+  `price` decimal(10,2) NOT NULL,
   `allow_mails` tinyint(4) NOT NULL,
   `city` varchar(50) NOT NULL,
   `category` varchar(50) NOT NULL,
@@ -132,4 +132,4 @@ INSERT INTO `cities` (`id`, `name`) VALUES
 (641800,	'Ордынское'),
 (641970,	'Черепаново');
 
--- 2015-10-27 16:05:04
+-- 2015-10-28 12:33:29

@@ -43,7 +43,7 @@ if (isset($_POST['install_submit'])) {
         exec($command,$output,$worked);
         switch($worked){
             case 0:
-                echo "Дамп базы данных успешно загружен: <a href= \"../\"> перейти к работе с объявлениями</a></br></br>";
+                echo "Дамп базы данных успешно загружен: <a href= \"./index.php\"> перейти к работе с объявлениями</a></br></br>";
                 break;
             case 1:
                 echo 'Не удалось загрузить дамп БД '.mysql_error().'</br>';
@@ -51,12 +51,14 @@ if (isset($_POST['install_submit'])) {
         }     
     }       
 }
-session_start();
-$_SESSION['server_name']    = $server_name;
-$_SESSION['user_name']      = $user_name;
-$_SESSION['password']       = $password;
-$_SESSION['database']       = $database;    
-        
+
+$connectStr =   "server_name = $server_name;\n".
+                "user_name   = $user_name;  \n".
+                "password    = $password;   \n".
+                "database    = $database;   \n";
+$connectFile = './myDbConnect.ini';
+file_put_contents($connectFile, $connectStr);
+       
 $smarty->assign('server_name', $server_name);
 $smarty->assign('user_name', $user_name);
 $smarty->assign('password', $password);

@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 /* Lesson 9 */
 
 $smarty_dir='./smarty/';
+$connectFile = './myDbConnect.ini';
 
 require($smarty_dir.'/libs/Smarty.class.php');
 
@@ -17,20 +18,28 @@ $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
 include 'fucntions.php';
-session_start();
-$server_name = isset($_SESSION['server_name']) ? $_SESSION['server_name'] : '';
-$user_name   = isset($_SESSION['user_name'])   ? $_SESSION['user_name']   : '';
-$password    = isset($_SESSION['password'])    ? $_SESSION['password']    : '';
-$database    = isset($_SESSION['database'])    ? $_SESSION['database']    : '';
+
+$connectInfo = [];
+if (file_exists($connectFile)) {
+    $connectInfo = parse_ini_file($connectFile, true);    
+}
+else {
+    echo 'Не удалось найти файл с параметрами подключения к БД - '.basename($connectFile);
+    exit();
+}
+$server_name = isset($connectInfo['server_name'])   ? $connectInfo['server_name'] : '';
+$user_name   = isset($connectInfo['user_name'])     ? $connectInfo['user_name']   : '';
+$password    = isset($connectInfo['password'])      ? $connectInfo['password']    : '';
+$database    = isset($connectInfo['database'])      ? $connectInfo['database']    : '';
 
 $db = mysql_connect($server_name, $user_name, $password) or die('Не удалось установить соединение с сервером БД '.mysql_error());
 
-mysql_select_db('test', $db) or die('Не удалось выбрать БД '.mysql_error());
+mysql_select_db($database, $db) or die('Не удалось выбрать БД '.mysql_error());
 mysql_query('SET NAMES UTF8');
 
-$cities = getCitiesFromDb($db);
+$cities     = getCitiesFromDb($db);
 $categories = getCategoriesFromDb($db);
-$adList = getAdListFromDb($db);
+$adList     = getAdListFromDb($db);
 
 $showAd = ''; 
 
@@ -45,7 +54,7 @@ if (isset($_POST['submit'])) {
             $result = insertAdIntoDb($db, $data);
         }    
         if($result) {
-            header("Location: ./");                    
+            header("Location: ./index.php");                    
         }        
     } else {
         $showAd = $_POST;
@@ -57,7 +66,7 @@ if (isset($_POST['submit'])) {
 } elseif (isset($_GET['del_id'])) {
     $del_id = $_GET['del_id'];
     deleteAdFromDb ($db, $del_id);    
-    header("Location: ./");
+    header("Location: ./index.php");
 }
    
 $data = fillData($showAd);
