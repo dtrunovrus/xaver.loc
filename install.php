@@ -1,11 +1,16 @@
 <?php
-error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
+error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 9 */
-$smarty_dir='./smarty/';
+/* Lesson 10 */
+require 'functions.php';
 
-require($smarty_dir.'/libs/Smarty.class.php');
+$dbSimple_dir = './DbSimple/';
+require_once $dbSimple_dir.'config.php';
+require_once $dbSimple_dir.'DbSimple/Generic.php';
+
+$smarty_dir='./smarty/';
+require $smarty_dir.'/libs/Smarty.class.php';
 
 $smarty = new Smarty();
 $smarty->compile_check  = true;
@@ -30,16 +35,12 @@ if (isset($_POST['install_submit'])) {
         Echo 'Не все поля заполнены! </br>';
     }
     else {
-        $db = new mysqli($server_name, $user_name, $password, $database);
-        if($db->connect_errno > 0){
-            die('Не удалось установить соединение с БД ['. $db->connect_error. ']');
-        }        
+        $db = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");                
+        $db->setErrorHandler('databaseErrorHandler');
+        
         $db->query('SET NAMES UTF8'); 
-        $result = $db -> query('DROP TABLE IF EXISTS ads, categories, category_groups, cities');        
-        if (!$result) {
-            echo 'Не удалось удалить таблицы '.$db->errno.'</br>';
-            exit();
-        }
+        $db->query('DROP TABLE IF EXISTS ads, categories, category_groups, cities');   
+        
         $command = 'mysql -h' .$server_name .' -u' .$user_name .' -p' .$password .' ' .$database .' < ' .$dumpFile;
         $output = [];
         exec($command,$output,$worked);

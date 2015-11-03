@@ -1,12 +1,16 @@
 <?php
-error_reporting(E_ALL | E_ERROR | E_PARSE | E_WARNING);
+error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
 /* Lesson 9 */
 
-$smarty_dir='./smarty/';
+$dbSimple_dir = './DbSimple/';
+require_once $dbSimple_dir.'config.php';
+require_once $dbSimple_dir.'DbSimple/Generic.php';
+
 $connectFile = './myDbConnect.ini';
 
+$smarty_dir='./smarty/';
 require($smarty_dir.'/libs/Smarty.class.php');
 
 $smarty = new Smarty();
@@ -32,11 +36,11 @@ $user_name   = isset($connectInfo['user_name'])     ? $connectInfo['user_name'] 
 $password    = isset($connectInfo['password'])      ? $connectInfo['password']    : '';
 $database    = isset($connectInfo['database'])      ? $connectInfo['database']    : '';
 
-$db = new mysqli($server_name, $user_name, $password, $database);
-if($db->connect_errno > 0){
-    die('Не удалось установить соединение с БД ['. $db->connect_error.']');
-}
-$db->query('SET NAMES UTF8');        
+$db = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");                
+$db->setErrorHandler('databaseErrorHandler');
+$db->setLogger('myLogger');
+
+$db->query('SET NAMES UTF8');      
 
 $cities     = getCitiesFromDb($db);
 $categories = getCategoriesFromDb($db);
@@ -54,9 +58,9 @@ if (isset($_POST['submit'])) {
         } else {
             $result = insertAdIntoDb($db, $data);
         }    
-        if($result) {
+//        if($result) {
             header("Location: ./index.php");                    
-        }        
+//        }        
     } else {
         $showAd = $_POST;
     }    
