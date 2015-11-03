@@ -58,9 +58,7 @@ if (isset($_POST['submit'])) {
         } else {
             $result = insertAdIntoDb($db, $data);
         }    
-//        if($result) {
-            header("Location: ./index.php");                    
-//        }        
+        header("Location: ./index.php");                    
     } else {
         $showAd = $_POST;
     }    

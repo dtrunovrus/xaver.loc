@@ -122,14 +122,7 @@ function insertAdIntoDb($db, $data) {
                                         $data['price'], 
                                         $data['allow_mails'], 
                                         $data['city'], 
-                                        $data['category']);    
-    /*
-    if (!$stmt) {
-        echo "Ошибка записи в БД. </br>";
-        return false;
-    }
-    return true;
-    */
+                                        $data['category']); 
 }
 
 /* Обновление записи в БД */
@@ -157,27 +150,13 @@ function updateAdInDb($db, $adId, $data) {
                                 $data['allow_mails'], 
                                 $data['city'], 
                                 $data['category'], 
-                                $adId);    
-    /*
-    if (!$stmt) {
-        echo "Ошибка обновления записи в БД </br>";
-        return false;
-    }    
-    return true;
-    */
+                                $adId); 
 }
 
 /* Удаление записи из БД */
 
 function deleteAdFromDb($db, $adId) {
-    $stmt = $db->query('DELETE FROM ads WHERE id = ?d',$adId);    
-    /*
-    if (!$stmt) {
-        echo 'Ошибка удаления записи из БД ' . $stmt->errno . "</br>";
-        return false;
-    }
-    return true;
-    */
+    $stmt = $db->query('DELETE FROM ads WHERE id = ?d',$adId);  
 }
 
 // Код обработчика ошибок SQL.
