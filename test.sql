@@ -25,10 +25,11 @@ CREATE TABLE `ads` (
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `groupid` int(11) NOT NULL,
+  `groupid` int(11) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `t_groupid` (`groupid`)
+  KEY `t_groupid` (`groupid`),
+  CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`groupid`) REFERENCES `category_groups` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `categories` (`id`, `groupid`, `name`) VALUES
@@ -105,13 +106,6 @@ INSERT INTO `category_groups` (`id`, `name`) VALUES
 (10,	'Для бизнеса'),
 (9999,	'Разное');
 
-DELIMITER ;;
-
-CREATE TRIGGER `category_groups_bd` BEFORE DELETE ON `category_groups` FOR EACH ROW
-UPDATE categories cat SET cat.groupid = 9999 WHERE cat.groupid = old.id;;
-
-DELIMITER ;
-
 DROP TABLE IF EXISTS `cities`;
 CREATE TABLE `cities` (
   `id` int(11) NOT NULL,
@@ -132,4 +126,4 @@ INSERT INTO `cities` (`id`, `name`) VALUES
 (641800,	'Ордынское'),
 (641970,	'Черепаново');
 
--- 2015-10-28 12:33:29
+-- 2015-11-03 15:28:06
