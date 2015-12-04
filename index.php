@@ -2,13 +2,9 @@
 error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 9 */
+/* Lesson 11 */
 
-$dbSimple_dir = './DbSimple/';
-require_once $dbSimple_dir.'config.php';
-require_once $dbSimple_dir.'DbSimple/Generic.php';
-
-$connectFile = './myDbConnect.ini';
+require_once './AdsManager.php';
 
 $smarty_dir='./smarty/';
 require($smarty_dir.'/libs/Smarty.class.php');
@@ -21,58 +17,12 @@ $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
-include 'functions.php';
+$obj = new AdsManager();
+$data = $obj->handleForm($_POST, $_GET);
 
-$connectInfo = [];
-if (file_exists($connectFile)) {
-    $connectInfo = parse_ini_file($connectFile, true);    
-}
-else {
-    echo 'Не удалось найти файл с параметрами подключения к БД - '.basename($connectFile);
-    exit();
-}
-$server_name = isset($connectInfo['server_name'])   ? $connectInfo['server_name'] : '';
-$user_name   = isset($connectInfo['user_name'])     ? $connectInfo['user_name']   : '';
-$password    = isset($connectInfo['password'])      ? $connectInfo['password']    : '';
-$database    = isset($connectInfo['database'])      ? $connectInfo['database']    : '';
-
-$db = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");                
-$db->setErrorHandler('databaseErrorHandler');
-$db->setLogger('myLogger');
-
-$db->query('SET NAMES UTF8');      
-
-$cities     = getCitiesFromDb($db);
-$categories = getCategoriesFromDb($db);
-$adList     = getAdListFromDb($db);
-
-$showAd = ''; 
-
-if (isset($_POST['submit'])) {
-    $data = fillData($_POST);
-    if (checkForm($data)) {        
-        if (isset($data['show_id'])) {
-            $id = $data['show_id'];
-            unset($data['show_id']);
-            $result = updateAdInDb($db, $id, $data);            
-        } else {
-            $result = insertAdIntoDb($db, $data);
-        }    
-        header("Location: ./index.php");                    
-    } else {
-        $showAd = $_POST;
-    }    
-} elseif (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $showAd = getAdFromDb($db, $id);    
-    $showAd['show_id'] = $_GET['id'];    
-} elseif (isset($_GET['del_id'])) {
-    $del_id = $_GET['del_id'];
-    deleteAdFromDb ($db, $del_id);    
-    header("Location: ./index.php");
-}
-   
-$data = fillData($showAd);
+$cities     = $obj->getCities();
+$categories = $obj->getCategories();
+$adList     = $obj->getAdList(); 
 
 $smarty->assign('cities', $cities);
 $smarty->assign('categories', $categories);
@@ -80,3 +30,5 @@ $smarty->assign('data', $data);
 $smarty->assign('adList', $adList);
 
 $smarty->display('index.tpl');
+
+?>

@@ -2,8 +2,8 @@
 error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 10 */
-require 'functions.php';
+/* Lesson 11 */
+
 
 $dbSimple_dir = './DbSimple/';
 require_once $dbSimple_dir.'config.php';
@@ -36,7 +36,6 @@ if (isset($_POST['install_submit'])) {
     }
     else {
         $db = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");                
-        $db->setErrorHandler('databaseErrorHandler');
         
         $db->query('SET NAMES UTF8'); 
         $db->query('DROP TABLE IF EXISTS ads, categories, category_groups, cities');   
