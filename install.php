@@ -3,6 +3,7 @@ error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
 /* Lesson 11 */
+require 'functions.php';
 
 
 $dbSimple_dir = './DbSimple/';
@@ -36,6 +37,8 @@ if (isset($_POST['install_submit'])) {
     }
     else {
         $db = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");                
+        $db->setErrorHandler('databaseErrorHandler');
+        $db->setLogger('myLogger');
         
         $db->query('SET NAMES UTF8'); 
         $db->query('DROP TABLE IF EXISTS ads, categories, category_groups, cities');   

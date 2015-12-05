@@ -17,16 +17,56 @@ $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
+include 'functions.php';
+
 $obj = new AdsManager();
-$data = $obj->handleForm($_POST, $_GET);
 
-$cities     = $obj->getCities();
-$categories = $obj->getCategories();
-$adList     = $obj->getAdList(); 
+$dbConnection   = $obj->getDbConnection();
+$cities         = $obj->getCities();
+$categories     = $obj->getCategories();
+$adList         = $obj->getAdList(); 
 
+$showAd = ''; 
+
+if (isset($_POST['submit'])) {                
+    $ad = new Ad($_POST);            
+    if ($ad->checkForm()) {        
+        if ((isset($ad->show_id)) && ($ad->show_id!='')) {
+            $id = $ad->show_id;
+            $ad->setId($id);
+            $ad->setShowId('');    
+            $ad->updateAdInDb($dbConnection);                                        
+        } 
+        else {
+            $ad->saveAdInDb($dbConnection);
+        }  
+        header("Location: ./index.php");
+    } 
+    else {               
+        $showAd = $ad;
+    }    
+} elseif (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $showAd = $obj->findAdInList($id);                        
+    if (!is_null($showAd)) {
+        $showAd->setShowId($id);    
+    }
+} elseif (isset($_GET['del_id'])) {
+    $del_id = $_GET['del_id'];
+    $ad = $obj->findAdInList($del_id);
+    if (!is_null($ad)) {
+        $ad->deleteAdFromDb($dbConnection);
+    }
+    header("Location: ./index.php");
+}
+
+if (is_null($showAd)) {
+    $showAd = new Ad();
+}
+    
 $smarty->assign('cities', $cities);
 $smarty->assign('categories', $categories);
-$smarty->assign('data', $data);
+$smarty->assign('data', $showAd);
 $smarty->assign('adList', $adList);
 
 $smarty->display('index.tpl');
