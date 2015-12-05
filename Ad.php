@@ -51,32 +51,14 @@ class Ad {
                     
     public function saveAdInDb($db) {
         $args = get_object_vars($this);
-        $stmt = $db->query('INSERT INTO ads(physical, 
-                                            seller_name, 
-                                            email, 
-                                            title, 
-                                            phone, 
-                                            description, 
-                                            price, 
-                                            allow_mails, 
-                                            city, 
-                                            category)
-                            VALUES (?d, ?, ?, ?, ?, ?, ?f, ?d, ?, ?)', 
-//                                            ...$args);
-                                            $args['physical'], 
-                                            $args['seller_name'], 
-                                            $args['email'], 
-                                            $args['title'], 
-                                            $args['phone'], 
-                                            $args['description'], 
-                                            $args['price'], 
-                                            $args['allow_mails'], 
-                                            $args['city'], 
-                                            $args['category']);          
+        unset($args['id']);
+        unset($args['show_id']);
+        $stmt = $db->query('INSERT INTO ads(?#) VALUES (?a)', 
+                            array_keys($args), array_values($args));
     }
     
     public function updateAdInDb($db) {
-        $args = get_object_vars($this);
+        $args = get_object_vars($this);              
         $stmt = $db->query( 'UPDATE ads' .
                             '   SET physical = ?d,' .
                             '       seller_name = ?,' .
@@ -89,7 +71,6 @@ class Ad {
                             '       city = ?,' .
                             '       category = ?' .
                             ' WHERE id = ?d',
-//                                    ...$args);
                                     $args['physical'], 
                                     $args['seller_name'], 
                                     $args['email'], 
