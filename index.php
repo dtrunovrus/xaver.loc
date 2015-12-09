@@ -2,7 +2,7 @@
 error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 11 */
+/* Lesson 12 */
 
 require_once './AdsManager.php';
 
@@ -19,27 +19,18 @@ $smarty->config_dir     = $smarty_dir.'configs';
 
 include 'functions.php';
 
-$obj = new AdsManager();
+$obj = AdsManager::instance();
 
 $dbConnection   = $obj->getDbConnection();
-$cities         = $obj->getCities();
-$categories     = $obj->getCategories();
 $adList         = $obj->getAdList(); 
 
-$showAd = ''; 
+$showAd = NULL; 
 
 if (isset($_POST['submit'])) {                
     $ad = new Ad($_POST);            
-    if ($ad->checkForm()) {        
-        if ((isset($ad->show_id)) && ($ad->show_id!='')) {
-            $id = $ad->show_id;
-            $ad->setId($id);
-            $ad->setShowId('');    
-            $ad->updateAdInDb($dbConnection);                                        
-        } 
-        else {
-            $ad->saveAdInDb($dbConnection);
-        }  
+    if ($ad->checkForm()) {
+        $ad->saveAdInDb($dbConnection);        
+        $obj->addAds($ad);
         header("Location: ./index.php");
     } 
     else {               
@@ -47,15 +38,13 @@ if (isset($_POST['submit'])) {
     }    
 } elseif (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $showAd = $obj->findAdInList($id);                        
-    if (!is_null($showAd)) {
-        $showAd->setShowId($id);    
-    }
+    $showAd = $adList[$id];
 } elseif (isset($_GET['del_id'])) {
     $del_id = $_GET['del_id'];
     $ad = $obj->findAdInList($del_id);
-    if (!is_null($ad)) {
-        $ad->deleteAdFromDb($dbConnection);
+    if (!is_null($ad)) {        
+        $ad->deleteAdFromDb($dbConnection);        
+        $obj->delAds($ad);
     }
     header("Location: ./index.php");
 }
@@ -63,12 +52,9 @@ if (isset($_POST['submit'])) {
 if (is_null($showAd)) {
     $showAd = new Ad();
 }
-    
-$smarty->assign('cities', $cities);
-$smarty->assign('categories', $categories);
 $smarty->assign('data', $showAd);
-$smarty->assign('adList', $adList);
+//$smarty->assign('adList', $adList);
 
-$smarty->display('index.tpl');
+$obj->getAllAdsFromDb()->prepareForOut()->display();
 
 ?>

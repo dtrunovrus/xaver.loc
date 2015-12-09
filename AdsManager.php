@@ -5,12 +5,14 @@ require_once './DbSimple/DbSimple/Generic.php';
 require_once './functions.php';
 require_once './Ad.php';
 
-class AdsManager {
+class AdsManager {    
+    private $connectFile = './myDbConnect.ini';
     private $dbConnection;
-    private $connectFile    = './myDbConnect.ini';
     private $cities; 
     private $categories;
-    private $adList;
+    private $adList = [];
+    
+    private static $instance = NULL;
     
     public function __construct() {
         $this->setDbConnection();
@@ -18,7 +20,14 @@ class AdsManager {
         
         $this->setCities();
         $this->setCategories();
-        $this->setAdList();
+        $this->getAllAdsFromDb();
+    }    
+    
+    public static function instance() {
+        if(self::$instance == NULL){
+            self::$instance = new AdsManager();
+        }
+        return self::$instance;
     }    
     
     private function setDbConnection() {
@@ -80,31 +89,74 @@ class AdsManager {
     public function getCategories() {
         return $this->categories;
     }    
-
-    /* Установка списка объявлений из БД */
-    private function setAdList() {
-        $dbAdList = [];
-        $result = $this->dbConnection->select('select * from ads');
-        foreach ($result as $key => $row) {
-            $ad = new Ad($row);
-            $dbAdList['ads'][] = $ad;
-        }
-        $this->adList = $dbAdList;
-    }
-    
+       
+//    /* Установка списка объявлений из БД */
+//    private function setAdList() {
+//        $dbAdList = [];
+//        $result = $this->dbConnection->select('select * from ads');
+//        foreach ($result as $key => $row) {
+//            $ad = new Ad($row);
+//            $dbAdList['ads'][] = $ad;
+//        }
+//        $this->adList = $dbAdList;
+//    }
+//    
     public function getAdList() {
         return $this->adList;
     }    
        
-    /* Поиск объявления в списке */
+    public function addAds(Ad $ad) {
+        if(!($this instanceof AdsManager)){
+            die('Нельзя использовать этот метод в конструкторе классов');
+        }
+        $this->adList[$ad->getId()]=$ad;
+    }
+    
+    public function delAds(Ad $ad) {
+        if(!($this instanceof AdsManager)){
+            die('Нельзя использовать этот метод в конструкторе классов');
+        }
+        unset($this->adList[$ad->getId()]);
+    }
+    
+    public function getAllAdsFromDb() {        
+        $all = $this->dbConnection->select('select * from ads');
+        foreach ($all as $value){
+            $ad = new Ad($value);
+            self::addAds($ad); //помещаем объекты в хранилище
+        }
+        return self::$instance;
+    }
+        
     public function findAdInList($id) {
         $ad = null;        
-        foreach ($this->adList['ads'] as $key => $value) {
-            if($value->id == $id) {                
-                $ad = $this->adList['ads'][$key];                
+        foreach ($this->adList as $key => $value) {
+            if($value->getId() == $id) {                
+                $ad = $this->adList[$key];                
                 break;
             }            
         }         
         return $ad;
     }     
+
+    public function prepareForOut() {
+        global $smarty;
+        $row='';
+        foreach ($this->adList as $value) {
+            $smarty->assign('ad',$value);
+            $row.=$smarty->fetch('table_row.tpl.html');
+        }
+        $smarty->assign('ads_rows',$row);
+        return self::$instance;
+    }
+    
+    public function display() {
+        global $smarty;
+        $smarty->assign('cities', $this->cities);
+        $smarty->assign('categories', $this->categories);        
+        $smarty->assign('adList', $this->adList);
+
+        $smarty->display('index.tpl');
+    }
+    
 }

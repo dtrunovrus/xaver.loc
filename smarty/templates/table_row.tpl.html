@@ -1,0 +1,6 @@
+<tr>
+    <td><a href= "?id={$ad->getId()}">{$ad->getTitle()}</a></td>
+    <td>{$ad->getPrice()}</td>
+    <td>{$ad->getSeller_name()|escape:'html'}</td>
+    <td><a href= "?del_id={$ad->getId()}"> Удалить</a></td>
+</tr>
