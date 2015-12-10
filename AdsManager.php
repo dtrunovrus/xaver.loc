@@ -121,8 +121,12 @@ class AdsManager {
     
     public function getAllAdsFromDb() {        
         $all = $this->dbConnection->select('select * from ads');
-        foreach ($all as $value){
-            $ad = new Ad($value);
+        foreach ($all as $value){     
+            if ($value['physical'] == 1) {
+                $ad = new IndividualAd($value);
+            } else {
+                $ad = new CompanyAd($value);
+            }            
             self::addAds($ad); //помещаем объекты в хранилище
         }
         return self::$instance;

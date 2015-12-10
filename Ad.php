@@ -12,7 +12,7 @@ class Ad {
     private $city            = '';
     private $category        = '';  
     private $id              = '';
-//    public $show_id         = '';
+    private $displayClass    = '';
     
     public function __construct($data=NULL) {
         if (!is_null($data)) {
@@ -35,54 +35,16 @@ class Ad {
             $this->id = $data['id'];
         }
     }    
-    
-//    public function setId ($id) {
-//        if (isset($id)) {
-//            $this->id = $id;
-//        }    
-//    }  
-//  
-//    public function setShowId ($id) {
-//        if (isset($id)) {
-//            $this->show_id = $id;
-//        }    
-//    }   
-                    
+
     public function saveAdInDb($db) {
         $args = get_object_vars($this);
         if ($args['id']=='') {
             unset($args['id']);            
         }        
+        unset($args['displayClass']);            
         $stmt = $db->query('REPLACE INTO ads(?#) VALUES (?a)', 
                             array_keys($args), array_values($args));
     }
-    
-//    public function updateAdInDb($db) {
-//        $args = get_object_vars($this);              
-//        $stmt = $db->query( 'UPDATE ads' .
-//                            '   SET physical = ?d,' .
-//                            '       seller_name = ?,' .
-//                            '       email = ?,' .
-//                            '       title = ?,' .
-//                            '       phone = ?,' .
-//                            '       description = ?,' .
-//                            '       price = ?f,' .
-//                            '       allow_mails = ?d,' .
-//                            '       city = ?,' .
-//                            '       category = ?' .
-//                            ' WHERE id = ?d',
-//                                    $args['physical'], 
-//                                    $args['seller_name'], 
-//                                    $args['email'], 
-//                                    $args['title'], 
-//                                    $args['phone'], 
-//                                    $args['description'], 
-//                                    $args['price'], 
-//                                    $args['allow_mails'], 
-//                                    $args['city'], 
-//                                    $args['category'], 
-//                                    $args['id']); 
-//    }
     
     public function deleteAdFromDb($db) {
         $stmt = $db->query('DELETE FROM ads WHERE id = ?d',$this->id);  
@@ -114,7 +76,11 @@ class Ad {
     public function getPhysical() {
         return $this->physical;
     }
-            
+    
+    public function setPhysical($arg) {
+        $this->physical = $arg;
+    }
+    
     public function getSeller_name() {
         return $this->seller_name;
     }
@@ -153,6 +119,36 @@ class Ad {
     
     public function getId() {
         return $this->id;
+    }
+    
+    public function getDisplayClass() {
+        return $this->displayClass;
+    }
+    
+    public function setDisplayClass($arg) {
+        $this->displayClass = $arg;
+    }
+}
+
+class IndividualAd extends Ad {
+    public function __construct($data=NULL) {
+        if (!is_null($data))
+        {               
+            parent::__construct($data);
+            $this->setPhysical((int) 1);
+            $this->setDisplayClass('success');            
+        }        
+    }   
+}
+
+class CompanyAd extends Ad {
+    public function __construct($data=NULL) {
+        if (!is_null($data))
+        {
+            parent::__construct($data);
+            $this->setPhysical((int) 0);
+            $this->setDisplayClass('info');
+        }
     }
 }
 

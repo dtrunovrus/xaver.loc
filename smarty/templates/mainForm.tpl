@@ -4,16 +4,22 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <div class="radio">
-                        <label>
-                            <input type="radio" {if $data->getPhysical()==1} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" {if $data->getPhysical()==0} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания
-                        </label>
-                    </div>
+                    <div class = "row">
+                        <div class = "col-md-5">  
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" {if $data->getPhysical()==1} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо
+                                </label>
+                            </div>
+                        </div>
+                        <div class = "col-md-5">  
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" {if $data->getPhysical()==0} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания
+                                </label>
+                            </div>
+                        </div>
+                    </div>    
                 </div>        
             </div>          
 

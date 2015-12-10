@@ -27,7 +27,14 @@ $adList         = $obj->getAdList();
 $showAd = NULL; 
 
 if (isset($_POST['submit'])) {                
-    $ad = new Ad($_POST);            
+    if (isset($_POST['physical'])) {
+        if ($_POST['physical']==1)
+        {
+            $ad = new IndividualAd($_POST);           
+        } else {
+            $ad = new CompanyAd($_POST);           
+        }
+    }
     if ($ad->checkForm()) {
         $ad->saveAdInDb($dbConnection);        
         $obj->addAds($ad);
