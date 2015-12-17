@@ -2,8 +2,8 @@
 
 require_once './DbSimple/config.php';
 require_once './DbSimple/DbSimple/Generic.php';
+require_once './DbSimple/DbSimple/Mysqli.php';
 require_once './functions.php';
-require_once './Ad.php';
 
 class AdsManager {    
     private $connectFile = './myDbConnect.ini';

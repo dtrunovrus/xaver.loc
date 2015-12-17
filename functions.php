@@ -2,6 +2,10 @@
 
 require_once './FirePhpCore/FirePHP.class.php';
 
+function autoLoadClasses($class) {
+    require_once './' . $class . '.php';
+}
+
 // Код обработчика ошибок SQL.
 function databaseErrorHandler($message, $info) {
     // Если использовалась @, ничего не делать.

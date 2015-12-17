@@ -3,8 +3,7 @@ error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
 /* Lesson 11 */
-require 'functions.php';
-
+require_once 'functions.php';
 
 $dbSimple_dir = './DbSimple/';
 require_once $dbSimple_dir.'config.php';

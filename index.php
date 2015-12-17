@@ -4,7 +4,8 @@ ini_set('display_errors', 1);
 
 /* Lesson 12 */
 
-require_once './AdsManager.php';
+require_once 'functions.php';
+spl_autoload_register('autoLoadClasses');
 
 $smarty_dir='./smarty/';
 require($smarty_dir.'/libs/Smarty.class.php');
@@ -16,8 +17,6 @@ $smarty->template_dir   = $smarty_dir.'templates';
 $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
-
-include 'functions.php';
 
 $obj = AdsManager::instance();
 
