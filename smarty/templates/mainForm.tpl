@@ -8,14 +8,14 @@
                         <div class = "col-md-5">  
                             <div class="radio">
                                 <label>
-                                    <input type="radio" {if $data->getPhysical()==1} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо
+                                    <input type="radio" {if $data instanceof IndividualAd} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо
                                 </label>
                             </div>
                         </div>
                         <div class = "col-md-5">  
                             <div class="radio">
                                 <label>
-                                    <input type="radio" {if $data->getPhysical()==0} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания
+                                    <input type="radio" {if $data instanceof CompanyAd} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания
                                 </label>
                             </div>
                         </div>

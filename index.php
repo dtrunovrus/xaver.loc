@@ -27,14 +27,7 @@ $adList         = $obj->getAdList();
 $showAd = NULL; 
 
 if (isset($_POST['submit'])) {                
-    if (isset($_POST['physical'])) {
-        if ($_POST['physical']==1)
-        {
-            $ad = new IndividualAd($_POST);           
-        } else {
-            $ad = new CompanyAd($_POST);           
-        }
-    }
+    $ad = AdFactory::factory($_POST);            
     if ($ad->checkForm()) {
         $ad->saveAdInDb($dbConnection);        
         $obj->addAds($ad);
@@ -60,7 +53,6 @@ if (is_null($showAd)) {
     $showAd = new Ad();
 }
 $smarty->assign('data', $showAd);
-//$smarty->assign('adList', $adList);
 
 $obj->getAllAdsFromDb()->prepareForOut()->display();
 

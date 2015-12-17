@@ -90,17 +90,6 @@ class AdsManager {
         return $this->categories;
     }    
        
-//    /* Установка списка объявлений из БД */
-//    private function setAdList() {
-//        $dbAdList = [];
-//        $result = $this->dbConnection->select('select * from ads');
-//        foreach ($result as $key => $row) {
-//            $ad = new Ad($row);
-//            $dbAdList['ads'][] = $ad;
-//        }
-//        $this->adList = $dbAdList;
-//    }
-//    
     public function getAdList() {
         return $this->adList;
     }    

@@ -1,7 +1,6 @@
 <?php
 
-class Ad {
-    private $physical        = 1;
+class Ad {    
     private $seller_name     = '';
     private $email           = '';
     private $title           = ''; 
@@ -11,8 +10,7 @@ class Ad {
     private $allow_mails     = 0;
     private $city            = '';
     private $category        = '';  
-    private $id              = '';
-    private $displayClass    = '';
+    private $id              = '';    
     
     public function __construct($data=NULL) {
         if (!is_null($data)) {
@@ -20,8 +18,7 @@ class Ad {
         }
     }   
     
-    public function setData($data) {
-        $this->physical       = ($data) && isset($data['physical'])    ? $data['physical']       : 1;
+    public function setData($data) {        
         $this->seller_name    = ($data) && isset($data['seller_name']) ? $data['seller_name']    : '';
         $this->email          = ($data) && isset($data['email'])       ? $data['email']          : '';
         $this->title          = ($data) && isset($data['title'])       ? $data['title']          : '';
@@ -71,15 +68,7 @@ class Ad {
             return false;
         }
         return true;
-    }    
-    
-    public function getPhysical() {
-        return $this->physical;
-    }
-    
-    public function setPhysical($arg) {
-        $this->physical = $arg;
-    }
+    }       
     
     public function getSeller_name() {
         return $this->seller_name;
@@ -119,37 +108,53 @@ class Ad {
     
     public function getId() {
         return $this->id;
-    }
-    
-    public function getDisplayClass() {
-        return $this->displayClass;
-    }
-    
-    public function setDisplayClass($arg) {
-        $this->displayClass = $arg;
-    }
+    }    
 }
 
 class IndividualAd extends Ad {
+    private $physical = 1;
+    
     public function __construct($data=NULL) {
         if (!is_null($data))
-        {               
+        {  
             parent::__construct($data);
-            $this->setPhysical((int) 1);
-            $this->setDisplayClass('success');            
         }        
     }   
+    
+    public function getPhysical() {
+        return $this->physical;
+    }
+    
+    public function setPhysical($arg) {
+        $this->physical = $arg;
+    }    
 }
 
 class CompanyAd extends Ad {
     public function __construct($data=NULL) {
         if (!is_null($data))
         {
-            parent::__construct($data);
-            $this->setPhysical((int) 0);
-            $this->setDisplayClass('info');
+            parent::__construct($data);            
         }
     }
 }
+
+class AdFactory {
+    public static function factory($post){     
+        $physical = isset($post['physical'])? $post['physical'] : '';
+        switch($physical) {
+            case "0":
+                $object = new CompanyAd($post);
+            break;
+            case "1":
+                $object = new IndividualAd($post);               
+            break;                
+        default :
+            $object = new Ad();
+        }        
+        return $object;
+    }            
+}
+
 
 ?>

@@ -1,4 +1,4 @@
-<tr class="{$ad->getDisplayClass()}">
+<tr class="{if $ad instanceof IndividualAd} success {else} info {/if}">
     <td><a href= "?id={$ad->getId()}">{$ad->getTitle()}</a></td>
     <td>{$ad->getPrice()}</td>
     <td>{$ad->getSeller_name()|escape:'html'}</td>
