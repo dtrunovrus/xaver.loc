@@ -112,7 +112,7 @@ class Ad {
 }
 
 class IndividualAd extends Ad {
-    private $physical = 1;
+    protected $physical = 1;
     
     public function __construct($data=NULL) {
         if (!is_null($data))
