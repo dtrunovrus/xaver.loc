@@ -1,0 +1,7 @@
+ul.myList li a:contains('CSS')
+
+img:nth-child(3), img:nth-child(4)
+
+table#languages tbody tr:nth-child(1), tr:nth-child(2)
+
+table#languages tbody tr:last td:odd
