@@ -2,9 +2,10 @@
 error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 12 */
+/* Lesson 15 */
+require_once './functions.php';
+require_once './connection.php';
 
-require_once 'functions.php';
 spl_autoload_register('autoLoadClasses');
 
 $smarty_dir='./smarty/';
@@ -18,7 +19,7 @@ $smarty->compile_dir    = $smarty_dir.'templates_c';
 $smarty->cache_dir      = $smarty_dir.'cache';
 $smarty->config_dir     = $smarty_dir.'configs';
 
-$obj = AdsManager::instance();
+$obj = AdsManager::instance($dbConnection);
 
 $dbConnection   = $obj->getDbConnection();
 $adList         = $obj->getAdList(); 

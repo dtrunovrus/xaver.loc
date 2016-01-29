@@ -116,5 +116,7 @@
             {include file="sessionList.tpl"}    
         {/if}     
     </div>  
+    
+    <div id='container'></div>      
 
 </div>

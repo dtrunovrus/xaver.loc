@@ -26,12 +26,12 @@ console.log("Недавно я прочитал книгу " + book.title +
 
 
 /* Part 4 */
-var book1 = {title:"Круг Ненависти", author: "Кейт ДеКандидо", pages: 500};
-    book2 = {title:"Душа Демона", author: "Ричард А.Кнаак", pages: 500}
+var book1 = {title:"Круг Ненависти", author: "Кейт ДеКандидо", pages: 500},
+    book2 = {title:"Душа Демона", author: "Ричард А.Кнаак", pages: 500},
     books = [];
 
-books.push($book1);
-books.push($book2);
+books.push(book1);
+books.push(book2);
 
 console.log("Недавно я прочитал книги " + books[0].title + " и " + books[1].title +
      		", написанные соответственно " + books[0].author + " и " + books[1].author + ". " +

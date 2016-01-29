@@ -1,21 +1,20 @@
 <?php
 
-require_once './DbSimple/config.php';
-require_once './DbSimple/DbSimple/Generic.php';
-require_once './DbSimple/DbSimple/Mysqli.php';
 require_once './functions.php';
 
 class AdsManager {    
-    private $connectFile = './myDbConnect.ini';
+    //private $connectFile = './myDbConnect.ini';
     private $dbConnection;
     private $cities; 
     private $categories;
     private $adList = [];
     
+    
     private static $instance = NULL;
     
-    public function __construct() {
-        $this->setDbConnection();
+    public function __construct($dbConnection) {
+        //$this->setDbConnection();        
+        $this->dbConnection = $dbConnection;
         $this->dbConnection->query('SET NAMES UTF8');              
         
         $this->setCities();
@@ -23,13 +22,14 @@ class AdsManager {
         $this->getAllAdsFromDb();
     }    
     
-    public static function instance() {
+    public static function instance($dbConnection) {
         if(self::$instance == NULL){
-            self::$instance = new AdsManager();
+            self::$instance = new AdsManager($dbConnection);
         }
         return self::$instance;
     }    
     
+    /*
     private function setDbConnection() {
         $connectInfo = [];
         if (file_exists($this->connectFile)) {
@@ -48,6 +48,7 @@ class AdsManager {
         $this->dbConnection->setErrorHandler('databaseErrorHandler');
         $this->dbConnection->setLogger('myLogger');
     }
+    */
     
     public function getDbConnection() {
         return $this->dbConnection;

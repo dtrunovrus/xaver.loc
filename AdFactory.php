@@ -2,7 +2,7 @@
 
 class AdFactory {
     public static function factory($post){     
-        $physical = isset($post['physical'])? $post['physical'] : '';
+        $physical = isset($post['physical'])? $post['physical'] : 1;
         switch($physical) {
             case "0":
                 $object = new CompanyAd($post);

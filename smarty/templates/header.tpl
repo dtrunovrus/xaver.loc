@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lesson 12</title>
+    <title>Lesson 15</title>
 
     <!-- Bootstrap -->
    <!-- Latest compiled and minified CSS -->
@@ -15,6 +15,10 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    
+    <script src="main_jquery.js"></script>
+    
   </head>
   <body style="width:970px; padding: 30px; margin: 0 auto">
