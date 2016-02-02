@@ -1,6 +1,8 @@
 <?php
 
-global $dbConnection;
+require_once 'ConnectionManager.php';
+$connectionManager = ConnectionManager::instance();
+$dbConnection = $connectionManager->getDbConnection(); 
 
 switch ($_GET['action']) {
     case 'delete':
