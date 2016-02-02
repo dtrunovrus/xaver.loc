@@ -1,19 +1,16 @@
 <?php
 
-require_once './functions.php';
-
 class AdsManager {    
-    //private $connectFile = './myDbConnect.ini';
+    
     private $dbConnection;
     private $cities; 
     private $categories;
     private $adList = [];
     
-    
     private static $instance = NULL;
     
-    public function __construct($dbConnection) {
-        //$this->setDbConnection();        
+    public function __construct() {
+        global $dbConnection;
         $this->dbConnection = $dbConnection;
         $this->dbConnection->query('SET NAMES UTF8');              
         
@@ -22,47 +19,17 @@ class AdsManager {
         $this->getAllAdsFromDb();
     }    
     
-    public static function instance($dbConnection) {
+    public static function instance() {
         if(self::$instance == NULL){
             self::$instance = new AdsManager($dbConnection);
         }
         return self::$instance;
     }    
     
-    /*
-    private function setDbConnection() {
-        $connectInfo = [];
-        if (file_exists($this->connectFile)) {
-            $connectInfo = parse_ini_file($this->connectFile, true);    
-        }
-        else {
-            echo 'Не удалось найти файл с параметрами подключения к БД - '.basename($connectFile);
-            exit();
-        }
-        $server_name = isset($connectInfo['server_name'])   ? $connectInfo['server_name'] : '';
-        $user_name   = isset($connectInfo['user_name'])     ? $connectInfo['user_name']   : '';
-        $password    = isset($connectInfo['password'])      ? $connectInfo['password']    : '';
-        $database    = isset($connectInfo['database'])      ? $connectInfo['database']    : '';
-
-        $this->dbConnection = DbSimple_Generic::connect("mysqli://$user_name:$password@$server_name/$database");        
-        $this->dbConnection->setErrorHandler('databaseErrorHandler');
-        $this->dbConnection->setLogger('myLogger');
-    }
-    */
-    
-    public function getDbConnection() {
-        return $this->dbConnection;
-    }    
-        
     /* Установка справочника городов из БД */
     private function setCities() {
-        $dbCities = [];
-        $result = $this->dbConnection->select('select * from cities order by name');    
-        foreach ($result as $key => $row) {
-            $id     = $row['id'];
-            $name   = $row['name'];
-            $dbCities[$id] = $name;
-        }
+        $dbCities = [];                
+        $dbCities = $this->dbConnection->select('select id AS ARRAY_KEY, name from cities order by name');                    
         $this->cities = $dbCities;
     }
         
@@ -72,18 +39,12 @@ class AdsManager {
 
     /* Установка справочника категорий из БД */
     private function setCategories() {
-        $dbCategories = [];
-        $result = $this->dbConnection->select('select grp.name grp_name,
-                                                      cat.id cat_id,
-                                                      cat.name cat_name
-                                                 from categories cat, category_groups grp
-                                                where cat.groupid = grp.id');    
-        foreach ($result as $key => $row) {
-            $grp_name   = $row['grp_name'];
-            $cat_id     = $row['cat_id'];
-            $cat_name   = $row['cat_name'];
-            $dbCategories[$grp_name][$cat_id] = $cat_name;
-        }
+        $dbCategories = [];        
+        $dbCategories = $this->dbConnection->select('select grp.name as ARRAY_KEY_1,
+                                                            cat.id as ARRAY_KEY_2,
+                                                            cat.name cat_name
+                                                       from categories cat, category_groups grp
+                                                      where cat.groupid = grp.id');           
         $this->categories =  $dbCategories;
     }
     

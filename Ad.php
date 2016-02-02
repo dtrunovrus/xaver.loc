@@ -11,8 +11,12 @@ class Ad {
     private $city            = '';
     private $category        = '';  
     private $id              = '';    
+    private $dbConnection;
     
     public function __construct($data=NULL) {
+        
+        global $dbConnection;
+        $this->dbConnection = $dbConnection;        
         if (!is_null($data)) {
             $this->setData($data);            
         }
@@ -33,18 +37,19 @@ class Ad {
         }
     }    
 
-    public function saveAdInDb($db) {
-        $args = get_object_vars($this);
+    public function saveAdInDb() {
+        $args = get_object_vars($this);        
         if ($args['id']=='') {
             unset($args['id']);            
         }        
+        unset($args['dbConnection']); 
         unset($args['displayClass']);            
-        $stmt = $db->query('REPLACE INTO ads(?#) VALUES (?a)', 
+        $stmt = $this->dbConnection->query('REPLACE INTO ads(?#) VALUES (?a)', 
                             array_keys($args), array_values($args));
     }
     
-    public function deleteAdFromDb($db) {
-        $stmt = $db->query('DELETE FROM ads WHERE id = ?d',$this->id);  
+    public function deleteAdFromDb() {
+        $stmt = $this->dbConnection->query('DELETE FROM ads WHERE id = ?d',$this->id);  
     }
     
     /* Проверка заполнения всех параметров формы */

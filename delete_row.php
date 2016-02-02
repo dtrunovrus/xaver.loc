@@ -1,7 +1,6 @@
 <?php
 
-require_once './functions.php';
-require_once './connection.php';
+global $dbConnection;
 
 switch ($_GET['action']) {
     case 'delete':

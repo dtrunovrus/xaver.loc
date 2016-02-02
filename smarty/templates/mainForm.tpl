@@ -58,7 +58,7 @@
                     <select class="form-control" name="city" >                    
                         <option value =''>-- Выберите город --</option>  
                         {foreach from=$cities key=code item=city}                             
-                            <option data-coords=",," {if $code==$data->getCity()} " selected = \"\"" {else} "" {/if} value="{$code}">{$city}</option>
+                            <option data-coords=",," {if $code==$data->getCity()} " selected = \"\"" {else} "" {/if} value="{$code}">{$city.name}</option>
                         {/foreach}                
                     </select>
                 </div>
@@ -72,7 +72,7 @@
                         {foreach from=$categories key=category item=value}  
                             <optgroup label='{$category}'>
                                 {foreach from=$value key=code item=name}          
-                                    <option data-coords=",," {if $code==$data->getCategory()} " selected = \"\"" {else} "" {/if} value="{$code}">{$name}</option>
+                                    <option data-coords=",," {if $code==$data->getCategory()} " selected = \"\"" {else} "" {/if} value="{$code}">{$name.cat_name}</option>
                                 {/foreach}  
                             {/foreach}   
                     </select>
