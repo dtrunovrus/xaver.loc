@@ -1,7 +1,7 @@
-<div class = "col-md-12">
+<div id = "sessionList" class = "col-md-12">
     <h3 class="sub-header">Список введённых объявлений</h3>
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table id="sessionListRows" class="table table-striped">
           <thead>
             <tr>
               <th>Название</th>

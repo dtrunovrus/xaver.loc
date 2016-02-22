@@ -3,7 +3,7 @@
 error_reporting(E_ERROR | E_PARSE | E_WARNING);
 ini_set('display_errors', 1);
 
-/* Lesson 15 */
+/* Lesson 16 */
 require_once './functions.php';
 
 spl_autoload_register('autoLoadClasses');

@@ -111,12 +111,17 @@
         </form>      
     </div>
 
+                
     <div class = "col-md-6">
+        <div id='container' class="alert alert-info alert-dismissible" style="display: none" role="alert">
+            <button type="button" style="float: right" onclick="$('#container').hide(); return false;" class="btn btn-success btn-sm"
+                    <span aria-hidden="true">&times;</span></button>
+            <div id="container_info"></div>
+        </div>      
+        
         {if count($adList)} 
             {include file="sessionList.tpl"}    
         {/if}     
     </div>  
     
-    <div id='container'></div>      
-
 </div>
