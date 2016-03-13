@@ -37,19 +37,29 @@ class Ad {
         }
     }    
 
-    public function saveAdInDb() {
-        $args = get_object_vars($this);        
-        if ($args['id']=='') {
-            unset($args['id']);            
-        }        
+    public function insertAdInDb() {
+        $args = get_object_vars($this);                
+        unset($args['id']);                    
         unset($args['dbConnection']); 
         unset($args['displayClass']);            
-        $stmt = $this->dbConnection->query('REPLACE INTO ads(?#) VALUES (?a)', 
-                            array_keys($args), array_values($args));
+        $stmt = $this->dbConnection->query('INSERT INTO ads(?#) VALUES (?a)', 
+                            array_keys($args), array_values($args));    
+        return $stmt;
+    }
+    
+    public function updateAdInDb() {
+        
+        $args = get_object_vars($this); 
+        $args['physical'] = isset($args['physical']) ? $args['physical'] : 0;
+        unset($args['dbConnection']); 
+        unset($args['displayClass']);            
+        $stmt = $this->dbConnection->query('UPDATE ads SET ?a WHERE id=?', $args, $args['id']);    
+        return $stmt;
     }
     
     public function deleteAdFromDb() {
         $stmt = $this->dbConnection->query('DELETE FROM ads WHERE id = ?d',$this->id);  
+        return $stmt;
     }
     
     /* Проверка заполнения всех параметров формы */

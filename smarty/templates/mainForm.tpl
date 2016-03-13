@@ -1,6 +1,6 @@
 <div class = "row">
     <div class = "col-md-6">  
-        <form class="form-horizontal" method="POST" role="form">
+        <form id="ajax-form" class="form-horizontal" method="POST" role="form">
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
@@ -8,14 +8,14 @@
                         <div class = "col-md-5">  
                             <div class="radio">
                                 <label>
-                                    <input type="radio" {if $data instanceof IndividualAd} " checked=\"\" " {else} "" {/if} value="1" name="physical">Частное лицо
+                                    <input type="radio" {if $data instanceof IndividualAd} " checked=\"\" " {else} "" {/if} value="1" name="physical" id = "fld_radio1">Частное лицо
                                 </label>
                             </div>
                         </div>
                         <div class = "col-md-5">  
                             <div class="radio">
                                 <label>
-                                    <input type="radio" {if $data instanceof CompanyAd} " checked=\"\" " {else} "" {/if} value="0" name="physical">Компания
+                                    <input type="radio" {if $data instanceof CompanyAd} " checked=\"\" " {else} "" {/if} value="0" name="physical" id = "fld_radio2">Компания
                                 </label>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
             <div class="checkbox">
                 <label>
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="checkbox" value="1" {if $data->getAllow_mails()==1} " checked=\"\" " {else} "" {/if} name="allow_mails" id="allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> 
+                        <input type="checkbox" value="1" {if $data->getAllow_mails()==1} " checked=\"\" " {else} "" {/if} name="allow_mails" id="fld_allow_mails" <span>Я не хочу получать вопросы по объявлению по e-mail</span> 
                     </div>
                 </label>
             </div>
@@ -55,10 +55,10 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">Город</label>
                 <div class="col-md-10">
-                    <select class="form-control" name="city" >                    
+                    <select class="form-control" name="city" id = "fld_city">                    
                         <option value =''>-- Выберите город --</option>  
                         {foreach from=$cities key=code item=city}                             
-                            <option data-coords=",," {if $code==$data->getCity()} " selected = \"\"" {else} "" {/if} value="{$code}">{$city.name}</option>
+                            <option data-coords=",," {if $code==$data->getCity()} " selected = \"\"" {else} "" {/if} value="{$code}">{$city.name} </option>
                         {/foreach}                
                     </select>
                 </div>
@@ -67,12 +67,12 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">Категория</label>
                 <div class="col-md-10">
-                    <select class="form-control" name="category">        
+                    <select class="form-control" name="category" id = "fld_category">        
                         <option value=''>-- Выберите категорию объявления --</option>
                         {foreach from=$categories key=category item=value}  
                             <optgroup label='{$category}'>
                                 {foreach from=$value key=code item=name}          
-                                    <option data-coords=",," {if $code==$data->getCategory()} " selected = \"\"" {else} "" {/if} value="{$code}">{$name.cat_name}</option>
+                                    <option data-coords=",," {if $code==$data->getCategory()} " selected = \"\"" {else} "" {/if} value="{$code}">{$name.cat_name} </option>
                                 {/foreach}  
                             {/foreach}   
                     </select>

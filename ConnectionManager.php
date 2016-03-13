@@ -37,13 +37,13 @@ class ConnectionManager {
         if(self::$instance == NULL){
             self::$instance = new ConnectionManager();
         }
-        return self::$instance;
+        return self::$instance->dbConnection;
     }  
-    
+    /*
     public function getDbConnection() {
         return $this->dbConnection;
     }
-    
+    */
 }
 
 ?>
