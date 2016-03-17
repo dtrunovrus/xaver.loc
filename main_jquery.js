@@ -1,12 +1,19 @@
 $(document).ready(function () {
     
     function showResponse(response) {
-        $('#sessionListRows>tbody').append(response.adInfo);
+                
+        if (response.action == 'insert'){
+            $('#sessionListRows>tbody').append(response.adInfo);
+        } else if (response.action == 'edit') {            
+            console.log("tr#"+response.id);
+            $("tr#"+response.id).replaceWith(response.adInfo);
+        }              
 
         if (response.status == 'success') {
             $('#container').removeClass('alert-danger').addClass('alert-succes');
             $('#container_info').html(response.message);
             $('#container').fadeIn('slow');
+            $("#ad_hidden_info").val(''); 
         } else if (response.status == 'error') {
             $('#container').removeClass('alert-succes').addClass('alert-danger');
             $('#container_info').html(response.message);
@@ -31,8 +38,9 @@ $(document).ready(function () {
     
     //$('a.delete').on('click', function () {
     $(document).on('click','a.delete',function(){    
-        var id = $(this).next().val();
+//        var id = $(this).next().val();
         var tr = $(this).closest('tr');                
+        var id = tr.attr('id');
         var parm = {"id": id};
 
         $.getJSON('ajaxController.php?action=delete',
@@ -62,8 +70,9 @@ $(document).ready(function () {
     )
     
     $(document).on('click', 'a.edit', function () {
-        var id = $(this).next().val();
+//        var id = $(this).next().val();
         var tr = $(this).closest('tr');
+        var id = tr.attr('id');
         var parm = {"id": id};
 
         $.getJSON('ajaxController.php?action=edit',

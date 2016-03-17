@@ -15,9 +15,10 @@ switch ($_GET['action']) {
                 $adsStore->getAllAdsFromDb();
                 $adList = $adsStore->getAdList();  
                 $ad = $adList[$res];   
-                $smarty->assign('ad',$ad);                
+                $smarty->assign('ad',$ad);                                
                 $result['adInfo'] = $smarty->fetch('table_row.tpl.html');
-                $result['status']='success';
+                $result['status'] = 'success';
+                $result['action'] = 'insert';                
                 $result['message'] = "Ad ".$ad->getTitle()." has been inserted successfully";
             }
             else {
@@ -31,7 +32,11 @@ switch ($_GET['action']) {
             $adList = $adsStore->getAdList();  
             if ($res>0) {                
                 $ad = $adList[$adId];   
-                $result['status']='success';
+                $smarty->assign('ad',$ad);  
+                $result['adInfo'] = $smarty->fetch('table_row.tpl.html');
+                $result['status'] = 'success';
+                $result['action'] = 'edit';                                
+                $result['id']     = $ad->getId();                                
                 $result['message'] = "Ad ".$ad->getTitle()." has been updated successfully";
             }
             else {

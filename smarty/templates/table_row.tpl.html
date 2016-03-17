@@ -1,8 +1,6 @@
-<tr class="{if $ad instanceof IndividualAd} success {else} info {/if}">
-    <td><a class="edit btn btn-link">{$ad->getTitle()}</a>
-        <input type="hidden" value={$ad->getId()} id="rowid" name="id"></td>
+<tr id="{$ad->getId()}" class="{if $ad instanceof IndividualAd} success {else} info {/if}">
+    <td><a class="edit btn btn-link">{$ad->getTitle()}</a>        
     <td>{$ad->getPrice()}</td>
     <td>{$ad->getSeller_name()|escape:'html'}</td>
-    <td><a class = "delete btn btn-success"> Удалить</a>
-        <input type="hidden" value={$ad->getId()} id="rowid" name="id"> </td>
+    <td><a class = "delete btn btn-success"> Удалить</a>        
 </tr>
